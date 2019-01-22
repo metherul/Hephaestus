@@ -1,0 +1,94 @@
+﻿<Window
+    x:Class="Hephaestus.View.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Hephaestus.View"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Hephaestus"
+    Width="1000"
+    Height="550"
+    Background="#F5F6F7"
+    FontFamily="{DynamicResource MaterialDesignFont}"
+    ResizeMode="NoResize"
+    TextElement.FontSize="13"
+    TextElement.FontWeight="Regular"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Window controls  -->
+        <Grid
+            Grid.Row="0"
+            Margin="5"
+            HorizontalAlignment="Stretch">
+            <Button
+                Width="Auto"
+                Height="Auto"
+                HorizontalAlignment="Right"
+                materialDesign:RippleAssist.Feedback="Black"
+                materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                Style="{DynamicResource MaterialDesignFloatingActionButton}">
+                <materialDesign:PackIcon
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Right"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    Kind="Close" />
+            </Button>
+        </Grid>
+
+        <!--  Body Content  -->
+        <materialDesign:Transitioner Grid.Row="1" SelectedIndex="1">
+            <materialDesign:TransitionerSlide>
+                <local:MainPage />
+            </materialDesign:TransitionerSlide>
+
+            <materialDesign:TransitionerSlide>
+                <local:CreateModpack />
+            </materialDesign:TransitionerSlide>
+        </materialDesign:Transitioner>
+
+        <!--  Footer REQUIRE AUTO VERSION UPDATE  -->
+        <Grid Grid.Row="2" Margin="5,0">
+            <Button
+                Width="Auto"
+                Height="Auto"
+                HorizontalAlignment="Left"
+                materialDesign:RippleAssist.Feedback="Black"
+                materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                Background="Transparent"
+                BorderBrush="Transparent">
+                <Label FontFamily="{DynamicResource RobotoMono}">Hephaestus v1.4.0</Label>
+            </Button>
+            <Button
+                Width="Auto"
+                Height="Auto"
+                HorizontalAlignment="Right"
+                materialDesign:RippleAssist.Feedback="Black"
+                materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                Background="Transparent"
+                BorderBrush="Transparent">
+                <StackPanel FlowDirection="LeftToRight" Orientation="Horizontal">
+                    <materialDesign:PackIcon
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        Kind="CodeGreaterThan" />
+                    <Label FontFamily="{DynamicResource RobotoMono}">Metherul</Label>
+                </StackPanel>
+            </Button>
+        </Grid>
+    </Grid>
+
+</Window>
