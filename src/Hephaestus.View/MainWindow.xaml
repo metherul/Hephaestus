@@ -10,6 +10,7 @@
     Width="1000"
     Height="550"
     Background="#F5F6F7"
+    DataContext="{Binding MainWindowViewModel, Source={StaticResource ViewModelLocator}}"
     FontFamily="{DynamicResource MaterialDesignFont}"
     ResizeMode="NoResize"
     TextElement.FontSize="13"
@@ -52,11 +53,11 @@
         <!--  Body Content  -->
         <materialDesign:Transitioner Grid.Row="1" SelectedIndex="1">
             <materialDesign:TransitionerSlide>
-                <local:MainPage />
+                <local:MainPageView />
             </materialDesign:TransitionerSlide>
 
             <materialDesign:TransitionerSlide>
-                <local:CreateModpack />
+                <local:SetupModpackView />
             </materialDesign:TransitionerSlide>
         </materialDesign:Transitioner>
 

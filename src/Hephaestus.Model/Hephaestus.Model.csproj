@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,7 +44,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IModel.cs" />
+    <Compile Include="Interfaces\IService.cs" />
+    <Compile Include="Transcompiler\Interfaces\ITranscompilerSetup.cs" />
+    <Compile Include="Transcompiler\Interfaces\ITranscompilerBase.cs" />
+    <Compile Include="Transcompiler\TranscompilerSetup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Transcompiler\TranscompilerBase.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
