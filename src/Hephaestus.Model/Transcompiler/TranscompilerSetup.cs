@@ -18,23 +18,22 @@ namespace Hephaestus.Model.Transcompiler
         {
             var pathDirectory = Path.GetDirectoryName(path);
 
+            _transcompilerBase.MODirectory = pathDirectory;
             _transcompilerBase.ModsDirectoryPath = Path.Combine(pathDirectory, "mods");
             _transcompilerBase.ProfilesDirectoryPath = Path.Combine(pathDirectory, "profiles");
         }
 
         public List<string> GetModOrganizerProfiles()
         {
-            return Directory.GetDirectories(_transcompilerBase.ProfilesDirectoryPath).ToList();
+            return Directory.GetDirectories(_transcompilerBase.ProfilesDirectoryPath)
+                .Select(x => new DirectoryInfo(x).Name)
+                .ToList();
         }
 
-        public void SetModOrganizerProfile()
+        public void SetModOrganizerProfile(string profileName)
         {
-
-        }
-
-        public void SetModOrganizerCsv(string csv)
-        {
-
+            _transcompilerBase.ChosenProfilePath =
+                Path.Combine(_transcompilerBase.ProfilesDirectoryPath, profileName);
         }
     }
 }

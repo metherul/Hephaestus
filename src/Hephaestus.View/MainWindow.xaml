@@ -51,7 +51,7 @@
         </Grid>
 
         <!--  Body Content  -->
-        <materialDesign:Transitioner Grid.Row="1" SelectedIndex="1">
+        <materialDesign:Transitioner Grid.Row="1" SelectedIndex="{Binding CurrentViewIndex}">
             <materialDesign:TransitionerSlide>
                 <local:MainPageView />
             </materialDesign:TransitionerSlide>

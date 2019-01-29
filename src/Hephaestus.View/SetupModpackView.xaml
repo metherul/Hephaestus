@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:cal="http://www.caliburnproject.org"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:local="clr-namespace:Hephaestus.View"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -78,7 +79,13 @@
                         <ComboBox
                             FontFamily="{DynamicResource RobotoMono}"
                             FontSize="15"
-                            ItemsSource="{Binding ModOrganizerProfiles}" />
+                            ItemsSource="{Binding ModOrganizerProfiles}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding ContextMenuSelectionChangedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=SelectedItem}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
                     </StackPanel>
                     <TextBlock
                         Grid.Column="1"
@@ -88,29 +95,34 @@
                     </TextBlock>
                 </Grid>
 
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="2" Margin="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width=".5*" />
                     </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Row="2" Margin="10">
-                        <Label
-                            materialDesign:HintAssist.Hint="Paste the Mod Organizer .CSV data here."
-                            FontSize="30"
-                            FontWeight="Bold">
-                            .CSV Dump
-                        </Label>
-                        <TextBox
-                            Height="150"
+                    <Border
+                        BorderBrush="{DynamicResource MaterialDesignBody}"
+                        BorderThickness="1"
+                        CornerRadius="5">
+                        <ListBox
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             FontFamily="{DynamicResource RobotoMono}"
-                            TextWrapping="Wrap" />
-                    </StackPanel>
+                            FontSize="15"
+                            ItemsSource="{Binding MissingArchives}">
+                            <ListBox.Resources>
+                                <Style TargetType="{x:Type ListBoxItem}">
+                                    <Setter Property="materialDesign:HintAssist.Hint" Value="{Binding}" />
+                                </Style>
+                            </ListBox.Resources>
+                        </ListBox>
+                    </Border>
                     <TextBlock
                         Grid.Column="1"
+                        Margin="5,0,0,0"
                         FontFamily="{DynamicResource RobotoMono}"
                         TextWrapping="Wrap">
-                        PLACE .GIF HERE
+                        Mod archives were not able to be found. Click on each item in this box to open a file browser and locate them manually. NOTE: If you are unsure where to find/download an archive, right click the item, copy, and paste the name into a Google search.
                     </TextBlock>
                 </Grid>
             </Grid>
@@ -119,9 +131,14 @@
                 Margin="0,0,10,10"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Command="{Binding ContinueImportCommand}"
-                FontSize="17">
-                Next
+                materialDesign:RippleAssist.Feedback="Black"
+                materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                Background="Transparent"
+                BorderBrush="{DynamicResource MaterialDesignBody}"
+                Command="{Binding IncrementViewCommand}"
+                FontSize="17"
+                Foreground="{DynamicResource MaterialDesignBody}">
+                Import Modlist
             </Button>
 
         </Grid>

@@ -7,8 +7,10 @@
     xmlns:local="clr-namespace:Hephaestus.View"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Hephaestus.ViewModel;assembly=Hephaestus.ViewModel"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    DataContext="{Binding MainPageViewModel, Source={StaticResource ViewModelLocator}}"
     FontFamily="{DynamicResource ProductSans}"
     TextElement.FontSize="15"
     TextElement.FontWeight="Regular"
@@ -154,7 +156,9 @@
                 materialDesign:RippleAssist.Feedback="Black"
                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
                 Background="White"
-                BorderBrush="Transparent">
+                BorderBrush="Transparent"
+                Command="{Binding IncrementViewCommand}"
+                CommandParameter="{x:Static vm:ViewIndex.SetupModpack}">
                 <Grid Margin="0,10" VerticalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
