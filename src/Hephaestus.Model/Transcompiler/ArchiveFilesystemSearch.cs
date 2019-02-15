@@ -21,6 +21,11 @@ namespace Hephaestus.Model.Transcompiler
 
         public string FindArchive(string archive)
         {
+            if (archive.StartsWith("\"") || archive.EndsWith("\""))
+            {
+                archive = archive.Replace("\"", "");
+            }
+
             if (Path.IsPathRooted(archive))
             {
                 archive = Path.GetFileName(archive);

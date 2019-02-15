@@ -47,7 +47,7 @@ namespace Hephaestus.Model.Transcompiler
                     ModPath = mod
                 };
 
-                var archivePath = iniData["General"]["installationFile"];
+                var archivePath = GetSafeFilename(iniData["General"]["installationFile"]);
 
                 // If the archive doesn't exist, initialize advanced archive search.
                 if (!File.Exists(archivePath))
@@ -57,7 +57,7 @@ namespace Hephaestus.Model.Transcompiler
 
                 if (archivePath == string.Empty)
                 {
-                    missingArchives.Add(Path.GetFileName(iniData["General"]["installationFile"]));
+                    missingArchives.Add(Path.GetFileName(GetSafeFilename(iniData["General"]["installationFile"])));
                 }
 
                 else
@@ -85,6 +85,11 @@ namespace Hephaestus.Model.Transcompiler
 
 
             return false;
+        }
+
+        public string GetSafeFilename(string filename)
+        {
+            return string.Join("", filename.Split('\"'));
         }
     }
 }
