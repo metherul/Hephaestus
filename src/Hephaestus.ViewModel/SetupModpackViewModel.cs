@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,12 +12,15 @@ namespace Hephaestus.ViewModel
 {
     public class SetupModpackViewModel : ViewModelBase, ISetupModpackViewModel
     {
+        private readonly IViewIndexController _viewIndexController;
         private readonly ITranscompilerSetup _transcompilerSetup;
         private readonly IModListBuilder _modListBuilder;
 
-        public RelayCommand OpenDirectoryBrowserCommand { get => new RelayCommand(OpenDirectoryBrowser); }
-        public RelayCommand<string> ContextMenuSelectionChangedCommand { get => new RelayCommand<string>(ContextMenuSelectionChanged); }
-        public RelayCommand IncrementViewCommand { get => new RelayCommand(IncrementView); }
+        public RelayCommand OpenDirectoryBrowserCommand => new RelayCommand(OpenDirectoryBrowser);
+        public RelayCommand<string> ContextMenuSelectionChangedCommand => new RelayCommand<string>(ContextMenuSelectionChanged);
+        public RelayCommand IncrementViewCommand => new RelayCommand(IncrementView);
+        public RelayCommand<string> BrowseForArchiveCommand => new RelayCommand<string>(BrowseForArchive);
+        public RelayCommand<string> SearchForArchiveCommand => new RelayCommand<string>(SearchForArchive);
 
         public ObservableCollection<string> ModOrganizerProfiles { get; set; } 
         public ObservableCollection<string> MissingArchives { get; set; }
@@ -26,19 +29,24 @@ namespace Hephaestus.ViewModel
         public string ModOrganizerProfilePath { get; set; }
         public string ModOrganizerCsv { get; set; }
 
+        public bool IsSetupComplete { get; set; }
+
         public SetupModpackViewModel(IComponentContext components)
-        { 
+        {
+            _viewIndexController = components.Resolve<IViewIndexController>();
             _transcompilerSetup = components.Resolve<ITranscompilerSetup>();
             _modListBuilder = components.Resolve<IModListBuilder>();
         }
 
         public void OpenDirectoryBrowser()
         {
+            ModOrganizerProfiles = new ObservableCollection<string>();
+
             var dialog = new OpenFileDialog()
             {
                 CheckFileExists = true,
                 Multiselect = false,
-                Filter = "Mod Organizer Executable|ModOrganizer.exe",
+                Filter = "Mod Organizer Executable|ModOrganizer.exe|All Files (*.*)|*.*",
                 Title = "Select your Mod Organizer Executable"
             };
 
@@ -55,7 +63,7 @@ namespace Hephaestus.ViewModel
         {
             _transcompilerSetup.SetModOrganizerProfile(contextMenuItem);
 
-            var (response, missingArchives) = _modListBuilder.BuildModListAndReturnMissing();
+            var missingArchives = _modListBuilder.BuildModListAndReturnMissing();
 
             if (missingArchives.Any())
             {
@@ -63,9 +71,42 @@ namespace Hephaestus.ViewModel
             }
         }
 
+        public void BrowseForArchive(string archiveName)
+        {
+            var dialog = new OpenFileDialog()
+            {
+                CheckFileExists = true,
+                Multiselect = false,
+                Filter = $"{archiveName}|{archiveName}|All Files (*.*)|*.*",
+                Title = $"Search for: {archiveName}"
+            };
+
+            if (dialog.ShowDialog() != DialogResult.OK || !File.Exists(dialog.FileName)) return;
+
+            var doMatch = _modListBuilder.ValidateArchiveAgainstPath(archiveName, dialog.FileName);
+
+            if (!doMatch)
+            {
+                // Raise notification here
+            }
+
+            _modListBuilder.AddMissingArchive(archiveName, dialog.FileName);
+            MissingArchives.Remove(archiveName);
+
+            if (MissingArchives.Count == 0)
+            {
+                IsSetupComplete = true;
+            }
+        }
+
+        public void SearchForArchive(string archiveName)
+        {
+            Process.Start($"https://google.com/search?q={Path.GetFileNameWithoutExtension(archiveName)}");
+        }
+
         public void IncrementView()
         {
-
+            _viewIndexController.SetCurrentViewIndex(ViewIndex.NexusLogin);
         }
     }
 }

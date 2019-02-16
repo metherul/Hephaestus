@@ -59,6 +59,10 @@
             <materialDesign:TransitionerSlide>
                 <local:SetupModpackView />
             </materialDesign:TransitionerSlide>
+
+            <materialDesign:TransitionerSlide>
+                <local:NexusLoginView />
+            </materialDesign:TransitionerSlide>
         </materialDesign:Transitioner>
 
         <!--  Footer REQUIRE AUTO VERSION UPDATE  -->

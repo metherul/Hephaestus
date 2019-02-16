@@ -18,15 +18,10 @@ namespace Hephaestus.Model.Transcompiler
             _archiveFilesystemSearch = components.Resolve<IArchiveFilesystemSearch>();
         }
 
-        public (string, List<string>) BuildModListAndReturnMissing()
+        public List<string> BuildModListAndReturnMissing()
         {
             var modListPath = Path.Combine(_transcompilerBase.ChosenProfilePath, _transcompilerBase.ModsListFileName);
             var missingArchives = new List<string>();
-
-            if (!File.Exists(modListPath))
-            {
-                return ($@"{modListPath} not found. This is an issue with your currently selected MO profile.", null);
-            }
 
             var modPaths = File.ReadAllLines(modListPath)
                 .Where(x => x.StartsWith("+"))
@@ -58,6 +53,9 @@ namespace Hephaestus.Model.Transcompiler
                 if (archivePath == string.Empty)
                 {
                     missingArchives.Add(Path.GetFileName(GetSafeFilename(iniData["General"]["installationFile"])));
+
+                    intermediaryModObject.ArchivePath = Path.GetFileName(GetSafeFilename(iniData["General"]["installationFile"]));
+                    intermediaryModObjects.Add(intermediaryModObject);
                 }
 
                 else
@@ -69,22 +67,25 @@ namespace Hephaestus.Model.Transcompiler
 
             _transcompilerBase.IntermediaryModObjects = intermediaryModObjects;
 
-            return (string.Empty, missingArchives);
+            return missingArchives;
         }
 
-        public (bool, string) ValidateArchiveAgainstPath(string archiveName, string archivePath)
+        public bool ValidateArchiveAgainstPath(string archiveName, string archivePath)
         {
             var archivePathFileName = Path.GetFileName(archivePath);
 
-            return (archiveName == archivePathFileName) ?  (true, "") :  (false, "Archive name and selected path do not match.");
+            return (archiveName == archivePathFileName);
         }
 
-        public bool AddMissingArchiveMod(string archiveName, string archivePath)
+        public bool AddMissingArchive(string archiveName, string archivePath)
         {
             // At this point, we need to trust that the archive is correct. If not, bubble up errors in later compilation
+            var matchingModObject = _transcompilerBase.IntermediaryModObjects.First(x => x.ArchivePath == archiveName);
+            _transcompilerBase
+                .IntermediaryModObjects[_transcompilerBase.IntermediaryModObjects.IndexOf(matchingModObject)]
+                .ArchivePath = archivePath;
 
-
-            return false;
+            return true;
         }
 
         public string GetSafeFilename(string filename)
