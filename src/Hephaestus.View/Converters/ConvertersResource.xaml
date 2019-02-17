@@ -5,5 +5,6 @@
 
     <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
+    <local:InverseBoolConverter x:Key="InverseBoolConverter" />
 
 </ResourceDictionary>

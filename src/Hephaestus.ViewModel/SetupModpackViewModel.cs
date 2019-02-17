@@ -61,6 +61,8 @@ namespace Hephaestus.ViewModel
 
         public void ContextMenuSelectionChanged(string contextMenuItem)
         {
+            if (contextMenuItem == null) return;
+
             _transcompilerSetup.SetModOrganizerProfile(contextMenuItem);
 
             var missingArchives = _modListBuilder.BuildModListAndReturnMissing();

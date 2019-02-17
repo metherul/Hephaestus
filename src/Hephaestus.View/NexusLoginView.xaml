@@ -22,5 +22,4 @@
     TextOptions.TextRenderingMode="Auto"
     mc:Ignorable="d">
     <Grid Margin="40,10" />
-
 </UserControl>
