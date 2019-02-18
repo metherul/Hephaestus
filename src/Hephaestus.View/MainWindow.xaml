@@ -53,6 +53,10 @@
         <!--  Body Content  -->
         <materialDesign:Transitioner Grid.Row="1" SelectedIndex="{Binding CurrentViewIndex}">
             <materialDesign:TransitionerSlide>
+                <local:NexusLoginView />
+            </materialDesign:TransitionerSlide>
+
+            <materialDesign:TransitionerSlide>
                 <local:MainPageView />
             </materialDesign:TransitionerSlide>
 
@@ -61,7 +65,7 @@
             </materialDesign:TransitionerSlide>
 
             <materialDesign:TransitionerSlide>
-                <local:NexusLoginView />
+                <local:TranscompilerView />
             </materialDesign:TransitionerSlide>
         </materialDesign:Transitioner>
 

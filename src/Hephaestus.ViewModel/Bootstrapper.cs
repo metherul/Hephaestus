@@ -12,8 +12,10 @@ namespace Hephaestus.ViewModel
 
         // ViewModelLocator
         public IViewModel MainWindowViewModel => Resolve<IMainWindowViewModel>();
+        public IViewModel NexusLoginViewModel => Resolve<INexusLoginViewModel>();
         public IViewModel MainPageViewModel => Resolve<IMainPageViewModel>();
         public IViewModel SetupModpackViewModel => Resolve<ISetupModpackViewModel>();
+        public IViewModel TranscompilerViewModel => Resolve<ITranscompilerViewModel>();
 
         public Bootstrapper()
         {

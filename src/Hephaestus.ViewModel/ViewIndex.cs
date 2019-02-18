@@ -2,8 +2,9 @@
 {
     public enum ViewIndex
     {
+        NexusLogin,
         MainPage,
         SetupModpack,
-        NexusLogin
+        Transcompiler
     }
 }

@@ -108,7 +108,7 @@ namespace Hephaestus.ViewModel
 
         public void IncrementView()
         {
-            _viewIndexController.SetCurrentViewIndex(ViewIndex.NexusLogin);
+            _viewIndexController.SetCurrentViewIndex(ViewIndex.Transcompiler);
         }
     }
 }
