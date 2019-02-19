@@ -48,7 +48,7 @@ namespace Hephaestus.Model.Transcompiler
 
                 // Done with data prep.
                 // Begin matching pairs of files together (archive, mod).
-                progressLog.Report($"[{currentIndex}] Extracting: '{Path.GetFileName(modObject.ArchivePath)}'");
+                progressLog.Report($"#[{currentIndex}] Extracting: '{Path.GetFileName(modObject.ArchivePath)}'");
 
                 var archive = new ArchiveFile(modObject.ArchivePath);
                 var archiveExtractionPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "extract");
