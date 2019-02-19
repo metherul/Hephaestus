@@ -87,7 +87,6 @@
     <Compile Include="Transcompiler\IntermediaryModObject.cs" />
     <Compile Include="Transcompiler\Interfaces\ITranscompile.cs" />
     <Compile Include="Transcompiler\ModListBuilder.cs" />
-    <Compile Include="Transcompiler\ModMetaBuilder.cs" />
     <Compile Include="Transcompiler\Transcompile.cs" />
     <Compile Include="Transcompiler\TranscompilerSetup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
