@@ -73,10 +73,8 @@
     <Compile Include="Core\Md5.cs" />
     <Compile Include="Interfaces\IModel.cs" />
     <Compile Include="Interfaces\IService.cs" />
-    <Compile Include="Modpack\ModpackBase\ModpackConfigurator.cs" />
-    <Compile Include="Modpack\ModpackBase\ModpackHeader.cs" />
-    <Compile Include="Modpack\ModpackBase\ModpackMod.cs" />
-    <Compile Include="Modpack\ModpackBase\ModpackStructure.cs" />
+    <Compile Include="Modpack\ModpackBase\Header.cs" />
+    <Compile Include="Modpack\ModpackBase\Mod.cs" />
     <Compile Include="Nexus\GetModsByMd5Result.cs" />
     <Compile Include="Nexus\Interfaces\INexusApi.cs" />
     <Compile Include="Nexus\NexusApi.cs" />
@@ -89,6 +87,7 @@
     <Compile Include="Transcompiler\IntermediaryModObject.cs" />
     <Compile Include="Transcompiler\Interfaces\ITranscompile.cs" />
     <Compile Include="Transcompiler\ModListBuilder.cs" />
+    <Compile Include="Transcompiler\ModpackExport.cs" />
     <Compile Include="Transcompiler\Transcompile.cs" />
     <Compile Include="Transcompiler\TranscompilerSetup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
