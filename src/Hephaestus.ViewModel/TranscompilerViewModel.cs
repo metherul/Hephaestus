@@ -34,7 +34,15 @@ namespace Hephaestus.ViewModel
         {
             var progressLog = new Progress<string>();
 
-            progressLog.ProgressChanged += (sender, s) => { ProgressLog.Add(s); };
+            progressLog.ProgressChanged += (sender, s) =>
+            {
+                ProgressLog.Add(s);
+
+                if (s.StartsWith("[!] Match found"))
+                {
+                    ProgressLog = new ObservableCollection<string>();
+                }
+            };
 
             Task.Factory.StartNew(() =>
             {
