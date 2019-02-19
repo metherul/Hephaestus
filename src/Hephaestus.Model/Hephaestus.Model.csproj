@@ -67,7 +67,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\GameName.cs" />
+    <Compile Include="Core\Interfaces\ILogger.cs" />
     <Compile Include="Core\Interfaces\IMd5.cs" />
+    <Compile Include="Core\Logger.cs" />
     <Compile Include="Core\Md5.cs" />
     <Compile Include="Interfaces\IModel.cs" />
     <Compile Include="Interfaces\IService.cs" />

@@ -1,10 +1,13 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Threading.Tasks;
+using Autofac;
 using Hephaestus.Model.Core;
+using Hephaestus.Model.Core.Interfaces;
 using Hephaestus.Model.Nexus.Interfaces;
 using Newtonsoft.Json.Linq;
 using WebSocket = WebSocketSharp.WebSocket;
@@ -13,6 +16,8 @@ namespace Hephaestus.Model.Nexus
 {
     public class NexusApi : INexusApi
     {
+        private readonly ILogger _logger;
+
         public delegate void HasLoggedIn();
 
         public event HasLoggedIn HasLoggedInEvent;
@@ -24,6 +29,11 @@ namespace Hephaestus.Model.Nexus
 
         private bool _isPremium;
         private bool _isLoggedIn;
+
+        public NexusApi(IComponentContext components)
+        {
+            _logger = components.Resolve<ILogger>();
+        }
 
         public async Task New(GameName gameName, string apiKey = "")
         {
@@ -90,8 +100,12 @@ namespace Hephaestus.Model.Nexus
 
         public async Task<GetModsByMd5Result> GetModsByMd5(string md5)
         {
+            _logger.Write($"MD5 Query: {md5}");
+
             var response = await _httpClient.GetStringAsync($"/v1/games/{_gameName}/mods/md5_search/{md5.ToLower()}.json");
             var apiJson = JArray.Parse(response);
+
+            _logger.Write($"success.");
 
             return new GetModsByMd5Result()
             {

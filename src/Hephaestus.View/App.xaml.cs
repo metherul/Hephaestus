@@ -9,17 +9,5 @@ namespace Hephaestus.View
     /// </summary>
     public partial class App : Application
     {
-        public App()
-        {
-            if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "debug.txt")))
-            {
-                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "debug.txt"));
-            }
-
-            AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
-            {
-                File.AppendText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "debug.txt"));
-            };
-        }
     }
 }
