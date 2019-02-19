@@ -34,12 +34,18 @@ namespace Hephaestus.Model.Transcompiler
             {
                 var modIni = Path.Combine(mod, _transcompilerBase.ModMetaFileName);
 
+                if (!File.Exists(modIni))
+                {
+                    continue;
+                }
+
                 var iniParser = new FileIniDataParser();
                 var iniData = iniParser.ReadFile(modIni);
 
                 var intermediaryModObject = new IntermediaryModObject()
                 {
-                    ModPath = mod
+                    ModPath = mod,
+                    IsNexusSource = iniData["General"]["repository"].ToLower() == "nexus"
                 };
 
                 var archivePath = GetSafeFilename(iniData["General"]["installationFile"]);

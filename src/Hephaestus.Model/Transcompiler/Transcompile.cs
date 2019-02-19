@@ -40,11 +40,14 @@ namespace Hephaestus.Model.Transcompiler
                 modObject.Md5 = _md5.Create(modObject.ArchivePath);
 
                 // Get ModId and FileId data
-                var md5Response = await _nexusApi.GetModsByMd5(modObject.Md5);
+                if (modObject.IsNexusSource)
+                {
+                    var md5Response = await _nexusApi.GetModsByMd5(modObject.Md5);
 
-                modObject.Author = md5Response.AuthorName;
-                modObject.ModId = md5Response.ModId;
-                modObject.FileId = md5Response.FileId;
+                    modObject.Author = md5Response.AuthorName;
+                    modObject.ModId = md5Response.ModId;
+                    modObject.FileId = md5Response.FileId;
+                }
 
                 // Done with data prep.
                 // Begin matching pairs of files together (archive, mod).

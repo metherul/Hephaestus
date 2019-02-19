@@ -14,5 +14,7 @@ namespace Hephaestus.Model.Transcompiler
         public string ArchivePath { get; set; }
 
         public string Md5 { get; set; }
+
+        public bool IsNexusSource { get; set; }
     }
 }
