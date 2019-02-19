@@ -20,15 +20,16 @@
     mc:Ignorable="d">
     <Grid Margin="40,20">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width=".5*" />
+            <ColumnDefinition Width=".3*" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width=".5*" />
+            <ColumnDefinition Width=".3*" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label
             Grid.Row="0"
@@ -44,12 +45,24 @@
             Margin="0,0,0,20"
             HorizontalAlignment="Center"
             FontFamily="{DynamicResource RobotoMono}">
-            Current Operation: Indexing installed mod files
+            Please wait. This may take some time.
         </Label>
-        <TextBlock
+        <ScrollViewer
             Grid.Row="2"
             Grid.Column="1"
-            FontFamily="{DynamicResource RobotoMono}"
-            FontSize="12" />
+            vm:ScrollableScrollViewer.AutoScroll="True"
+            VerticalScrollBarVisibility="Visible">
+            <ItemsControl
+                FontFamily="{DynamicResource RobotoMono}"
+                FontSize="12"
+                ItemsSource="{Binding ProgressLog}" />
+        </ScrollViewer>
+        <ProgressBar
+            Grid.Row="3"
+            Grid.Column="1"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            Foreground="{DynamicResource MaterialDesignBody}"
+            IsIndeterminate="True" />
     </Grid>
 </UserControl>

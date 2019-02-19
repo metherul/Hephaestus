@@ -91,7 +91,7 @@ namespace Hephaestus.Model.Nexus
         public async Task<GetModsByMd5Result> GetModsByMd5(string md5)
         {
             var response = await _httpClient.GetStringAsync($"/v1/games/{_gameName}/mods/md5_search/{md5.ToLower()}.json");
-            var apiJson = JObject.Parse(response);
+            var apiJson = JArray.Parse(response);
 
             return new GetModsByMd5Result()
             {
