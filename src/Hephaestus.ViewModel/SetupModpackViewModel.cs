@@ -70,6 +70,11 @@ namespace Hephaestus.ViewModel
             if (missingArchives.Any())
             {
                 MissingArchives = new ObservableCollection<string>(missingArchives);
+
+                if (MissingArchives.Count() == 0)
+                {
+                    IsSetupComplete = true;
+                }
             }
         }
 

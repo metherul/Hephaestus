@@ -39,11 +39,14 @@ namespace Hephaestus.Model.Transcompiler
             var iniParser = new FileIniDataParser();
             var iniData = iniParser.ReadFile(Path.Combine(_transcompilerBase.MODirectory, _transcompilerBase.MOMetaFileName));
 
-            var recentDirectory = iniData["recentDirectories"]["1\\directory"];
+            var recentDirectories = iniData["recentDirectories"].Where(x => x.KeyName.Contains("directory")).Select(x => x.Value).ToList();
 
-            if (Directory.Exists(recentDirectory) && File.Exists(Path.Combine(recentDirectory, archive)))
+            foreach (var recentDirectory in recentDirectories)
             {
-                return Path.Combine(recentDirectory, archive);
+                if (Directory.Exists(recentDirectory) && File.Exists(Path.Combine(recentDirectory, archive)))
+                {
+                    return Path.Combine(recentDirectory, archive);
+                }
             }
 
             // Check common directory locations
