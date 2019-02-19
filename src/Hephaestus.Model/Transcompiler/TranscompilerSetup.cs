@@ -21,6 +21,7 @@ namespace Hephaestus.Model.Transcompiler
             _transcompilerBase.MODirectory = pathDirectory;
             _transcompilerBase.ModsDirectoryPath = Path.Combine(pathDirectory, "mods");
             _transcompilerBase.ProfilesDirectoryPath = Path.Combine(pathDirectory, "profiles");
+            _transcompilerBase.DownloadsDirectoryPath = Path.Combine(pathDirectory, "downloads");
         }
 
         public List<string> GetModOrganizerProfiles()
