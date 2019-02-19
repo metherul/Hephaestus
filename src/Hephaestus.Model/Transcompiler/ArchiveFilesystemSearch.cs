@@ -31,11 +31,9 @@ namespace Hephaestus.Model.Transcompiler
                 archive = Path.GetFileName(archive);
             }
 
-            var test = Path.Combine(_transcompilerBase.ModsDirectoryPath, archive);
-
             if (File.Exists(Path.Combine(_transcompilerBase.DownloadsDirectoryPath, archive)))
             {
-                return Path.Combine(_transcompilerBase.ModsDirectoryPath, archive);
+                return Path.Combine(_transcompilerBase.DownloadsDirectoryPath, archive);
             }
 
             var iniParser = new FileIniDataParser();
