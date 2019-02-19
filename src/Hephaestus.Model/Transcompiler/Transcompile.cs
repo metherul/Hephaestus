@@ -82,6 +82,15 @@ namespace Hephaestus.Model.Transcompiler
                     }
 
                     // More than one match. Fall back to advanced identification.
+                    if (possibleArchiveMatches.Count(x => x.Name == modFile.Name) == 1)
+                    {
+                        var index = possibleArchiveMatches.IndexOf(possibleArchiveMatches.First(x => x.Name == modFile.Name));
+                        var item = possibleArchiveMatches[index];
+
+                        possibleArchiveMatches.RemoveAt(index);
+                        possibleArchiveMatches.Insert(0, item);
+                    }
+
                     foreach (var possibleArchiveMatch in possibleArchiveMatches)
                     {
                         progressLog.Report($"[?] Possible match: {possibleArchiveMatch.Name}");
