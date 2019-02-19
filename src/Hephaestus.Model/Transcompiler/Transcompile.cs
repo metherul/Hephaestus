@@ -17,12 +17,14 @@ namespace Hephaestus.Model.Transcompiler
         private readonly ITranscompilerBase _transcompilerBase;
         private readonly IMd5 _md5;
         private readonly INexusApi _nexusApi;
+        private readonly IModpackExport _modpackExport;
 
         public Transcompile(IComponentContext components)
         {
             _transcompilerBase = components.Resolve<ITranscompilerBase>();
             _md5 = components.Resolve<IMd5>();
             _nexusApi = components.Resolve<INexusApi>();
+            _modpackExport = components.Resolve<IModpackExport>();
         }
 
         public async Task Start(IProgress<string> progressLog)
@@ -47,6 +49,7 @@ namespace Hephaestus.Model.Transcompiler
                     modObject.Author = md5Response.AuthorName;
                     modObject.ModId = md5Response.ModId;
                     modObject.FileId = md5Response.FileId;
+                    modObject.TrueArchiveName = md5Response.ArchiveName;
                 }
 
                 // Done with data prep.
@@ -112,6 +115,11 @@ namespace Hephaestus.Model.Transcompiler
 
                 Directory.Delete(archiveExtractionPath, true);
             }
+
+            // Write modpack to file
+            progressLog.Report("Writing modpack to file...");
+
+            await _modpackExport.ExportModpack();
 
             progressLog.Report("[########] Progress complete. Phin stnkco");
         }

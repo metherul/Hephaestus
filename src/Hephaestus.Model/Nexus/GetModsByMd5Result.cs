@@ -5,5 +5,6 @@
         public string AuthorName;
         public string ModId;
         public string FileId;
+        public string ArchiveName;
     }
 }

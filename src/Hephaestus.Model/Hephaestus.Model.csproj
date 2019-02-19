@@ -80,6 +80,7 @@
     <Compile Include="Nexus\NexusApi.cs" />
     <Compile Include="Transcompiler\ArchiveFilesystemSearch.cs" />
     <Compile Include="Transcompiler\ArchiveModFilePair.cs" />
+    <Compile Include="Transcompiler\Interfaces\IModpackExport.cs" />
     <Compile Include="Transcompiler\Interfaces\IArchiveFilesystemSearch.cs" />
     <Compile Include="Transcompiler\Interfaces\IModListBuilder.cs" />
     <Compile Include="Transcompiler\Interfaces\ITranscompilerSetup.cs" />

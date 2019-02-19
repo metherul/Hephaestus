@@ -12,6 +12,7 @@ namespace Hephaestus.Model.Transcompiler
         public string Author { get; set; }
         public string ModPath { get; set; }
         public string ArchivePath { get; set; }
+        public string TrueArchiveName { get; set; }
 
         public string Md5 { get; set; }
 

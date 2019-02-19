@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Hephaestus.Model.Transcompiler
 {
-    public class ModpackExport
+    public class ModpackExport : IModpackExport
     {
         private readonly ITranscompilerBase _transcompilerBase;
 
@@ -22,8 +22,7 @@ namespace Hephaestus.Model.Transcompiler
         public async Task ExportModpack()
         {
             var intermediaryModObjects = _transcompilerBase.IntermediaryModObjects;
-            var modpackDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                Path.GetDirectoryName(_transcompilerBase.ChosenProfilePath));
+            var modpackDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test modpack");
 
             if (Directory.Exists(modpackDirectory))
             {
@@ -44,8 +43,14 @@ namespace Hephaestus.Model.Transcompiler
             };
 
             // Write to modpack directory
-            File.WriteAllText(Path.Combine(modpackDirectory, "header.json"),
-                JsonConvert.SerializeObject(modpackHeader));
+            var headerPath = Path.Combine(modpackDirectory, "header.json");
+
+            if (!File.Exists(headerPath))
+            {
+                File.Create(headerPath).Close();
+            }
+
+            File.WriteAllText(headerPath, JsonConvert.SerializeObject(modpackHeader, Formatting.Indented));
 
             // Create the "mods" subdirectory
             var modsDirectory = Path.Combine(modpackDirectory, "mods");
@@ -55,8 +60,8 @@ namespace Hephaestus.Model.Transcompiler
             {
                 var mod = new Mod()
                 {
-                    ModName = Path.GetDirectoryName(modObject.ModPath),
-                    FileName = Path.GetFileName(modObject.ArchivePath),
+                    ModName = new DirectoryInfo(modObject.ModPath).Name,
+                    FileName = modObject.TrueArchiveName,
                     FileSize = new FileInfo(modObject.ArchivePath).Length.ToString(),
                     Md5 = modObject.Md5.ToLower(),
                     ModId = modObject.ModId,
@@ -71,8 +76,15 @@ namespace Hephaestus.Model.Transcompiler
 
                 mod.InstallParameters = installationParameters;
 
+                var modPath = Path.Combine(modsDirectory, mod.ModName + ".json");
+
+                if (!File.Exists(modPath))
+                {
+                    File.Create(modPath).Close();
+                }
+
                 // Write to file
-                File.WriteAllText(Path.Combine(modsDirectory, mod.ModName), JsonConvert.SerializeObject(mod));
+                File.WriteAllText(modPath, JsonConvert.SerializeObject(mod, Formatting.Indented));
             }
         }
     }
