@@ -71,17 +71,7 @@ namespace Hephaestus.ViewModel
 
             var missingArchives = _modListBuilder.BuildModListAndReturnMissing();
 
-            if (missingArchives.Any())
-            {
-                MissingArchives = new ObservableCollection<string>(missingArchives);
-                HasInvalidMods = true;
-            }
-
-            else
-            {
-                HasInvalidMods = false;
-                IsSetupComplete = true;
-            }
+            IsSetupComplete = true;
         }
 
         public void BrowseForArchive(string archiveName)

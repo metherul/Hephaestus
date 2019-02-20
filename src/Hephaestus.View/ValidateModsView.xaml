@@ -9,7 +9,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     Background="Transparent"
-    DataContext="{Binding SetupModpackViewModel, Source={StaticResource ViewModelLocator}}"
+    DataContext="{Binding ValidateModsViewModel, Source={StaticResource ViewModelLocator}}"
     FontFamily="{DynamicResource ProductSans}"
     TextElement.FontSize="13"
     TextElement.FontWeight="Regular"
@@ -19,9 +19,7 @@
     mc:Ignorable="d">
     <Grid Margin="40,10">
         <Grid
-            Grid.Row="2"
             Grid.Column="0"
-            Grid.ColumnSpan="2"
             Margin="10"
             IsEnabled="{Binding IsSetupComplete, Converter={StaticResource InverseBoolConverter}}">
             <Border
@@ -30,13 +28,6 @@
                 BorderThickness="1"
                 CornerRadius="5">
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <Label
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="20"
-                        Visibility="{Binding HasInvalidMods, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                        Mods with archives that were unable to be automatically found will be listed here.
-                    </Label>
                     <ListBox
                         HorizontalContentAlignment="Stretch"
                         materialDesign:RippleAssist.Feedback="Transparent"
@@ -46,14 +37,6 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid Margin="0,-3" HorizontalAlignment="Stretch">
-                                    <Grid.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem
-                                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}, Path=DataContext.SearchForArchiveCommand}"
-                                                CommandParameter="{Binding}"
-                                                Header="Google Search" />
-                                        </ContextMenu>
-                                    </Grid.ContextMenu>
                                     <StackPanel FlowDirection="LeftToRight" Orientation="Horizontal">
                                         <Border Background="White" CornerRadius="10">
                                             <StackPanel Orientation="Horizontal">
