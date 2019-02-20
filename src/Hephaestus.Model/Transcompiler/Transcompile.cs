@@ -76,7 +76,7 @@ namespace Hephaestus.Model.Transcompiler
                 progressLog.Report($"[] Indexing files...");
 
                 var archiveFiles = Directory.GetFiles(archiveExtractionPath, "*.*", SearchOption.AllDirectories).Select(x => new FileInfo(x)).ToList();
-                var modFiles = Directory.GetFiles(modObject.ModPath, "*.*", SearchOption.AllDirectories).Select(x => new FileInfo(x)).Where(x => x.Name != "meta.ini").ToList();
+                var modFiles = Directory.GetFiles(modObject.ModPath, "*.*", SearchOption.AllDirectories);
 
                 // Search for archive and mod file pairs
 
@@ -84,25 +84,27 @@ namespace Hephaestus.Model.Transcompiler
 
                 foreach (var modFile in modFiles)
                 {
-                    progressLog.Report($"[!] Searching for archive match to: '{modFile.Name}'");
+                    var modFileInfo = new FileInfo(modFile);
+
+                    progressLog.Report($"[!] Searching for archive match to: '{modFileInfo.Name}'");
 
                     var archiveModPair = new ArchiveModFilePair(modObject.ArchivePath, modObject.ModPath);
 
                     // Attempt to find a match by file length
-                    var possibleArchiveMatches = archiveFiles.Where(x => x.Length == modFile.Length).ToList();
+                    var possibleArchiveMatches = archiveFiles.Where(x => x.Length == modFileInfo.Length).ToList();
 
                     if (possibleArchiveMatches.Any() && possibleArchiveMatches.Count() == 1)
                     {
                         progressLog.Report($"[!] Match found: {possibleArchiveMatches.First().Name}");
 
-                        archiveModPairs.Add(archiveModPair.New(possibleArchiveMatches.First().FullName, modFile.FullName));
+                        archiveModPairs.Add(archiveModPair.New(possibleArchiveMatches.First().FullName, modFileInfo.FullName));
                         continue;
                     }
 
                     // More than one match. Fall back to advanced identification.
-                    if (possibleArchiveMatches.Count(x => x.Name == modFile.Name) == 1)
+                    if (possibleArchiveMatches.Count(x => x.Name == modFileInfo.Name) == 1)
                     {
-                        var index = possibleArchiveMatches.IndexOf(possibleArchiveMatches.First(x => x.Name == modFile.Name));
+                        var index = possibleArchiveMatches.IndexOf(possibleArchiveMatches.First(x => x.Name == modFileInfo.Name));
                         var item = possibleArchiveMatches[index];
 
                         possibleArchiveMatches.RemoveAt(index);
@@ -113,11 +115,11 @@ namespace Hephaestus.Model.Transcompiler
                     {
                         progressLog.Report($"[?] Possible match: {possibleArchiveMatch.Name}");
 
-                        if (AreFilesEqual(possibleArchiveMatch, modFile))
+                        if (AreFilesEqual(possibleArchiveMatch, modFileInfo))
                         {
                             progressLog.Report($"[!] Match found: {possibleArchiveMatch.Name}");
 
-                            archiveModPairs.Add(archiveModPair.New(possibleArchiveMatch.FullName, modFile.FullName));
+                            archiveModPairs.Add(archiveModPair.New(possibleArchiveMatch.FullName, modFileInfo.FullName));
                             break;
                         }
                     }
