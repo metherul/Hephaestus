@@ -25,13 +25,14 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Margin="0,0,0,5">
-                <Label FontSize="30">
+                <Label FontSize="30" Visibility="{Binding IsValidationComplete, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                     Some mods could not be automatically validated.
                 </Label>
                 <Label
                     Margin="0,-5,0,0"
                     FontSize="18"
-                    Opacity=".5">
+                    Opacity=".5"
+                    Visibility="{Binding IsValidationComplete, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                     Please validate them manually below.
                 </Label>
             </StackPanel>
@@ -41,12 +42,13 @@
                 Padding="2"
                 BorderBrush="{DynamicResource MaterialDesignBody}"
                 BorderThickness="1"
-                CornerRadius="5">
+                CornerRadius="5"
+                Visibility="{Binding IsValidationComplete, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Grid
                     Margin="5"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch">
-                    <ScrollViewer HorizontalContentAlignment="Stretch">
+                    <ScrollViewer HorizontalContentAlignment="Stretch" Visibility="{Binding IsValidationComplete, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                         <ItemsControl
                             HorizontalContentAlignment="Stretch"
                             materialDesign:RippleAssist.Feedback="Transparent"
@@ -120,6 +122,63 @@
                     </ScrollViewer>
                 </Grid>
             </Border>
+
+            <Button
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Width="Auto"
+                Height="Auto"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                materialDesign:RippleAssist.Feedback="Black"
+                materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                Background="White"
+                BorderBrush="Transparent"
+                Command="{Binding IncrementViewCommand}"
+                CommandParameter="false"
+                Visibility="{Binding IsValidationComplete, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Grid Margin="0,10" VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <materialDesign:PackIcon
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="0"
+                        Width="40"
+                        Height="40"
+                        Margin="0,0,20,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        Kind="CheckAll" />
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        FontFamily="{DynamicResource ProductSans}"
+                        FontSize="25"
+                        FontWeight="Bold"
+                        Foreground="{DynamicResource MaterialDesignBody}">
+                        All Mods Have Been Validated
+                    </TextBlock>
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        FontSize="15"
+                        FontWeight="Regular"
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        TextWrapping="Wrap">
+                        Continue to modlist transcompilation.
+                    </TextBlock>
+                </Grid>
+            </Button>
         </Grid>
     </Grid>
 

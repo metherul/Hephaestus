@@ -21,7 +21,6 @@ namespace Hephaestus.ViewModel
         public RelayCommand IncrementViewCommand => new RelayCommand(IncrementView);
 
         public ObservableCollection<string> ModOrganizerProfiles { get; set; } 
-        public ObservableCollection<string> MissingArchives { get; set; }
 
         public string ModOrganizerExePath { get; set; }
 
@@ -31,7 +30,6 @@ namespace Hephaestus.ViewModel
         public string ModpackVersion { get; set; }
 
         public bool IsSetupComplete { get; set; }
-        public bool HasInvalidMods { get; set; }
 
         public SetupModpackViewModel(IComponentContext components)
         {

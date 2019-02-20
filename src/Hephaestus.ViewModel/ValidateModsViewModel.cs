@@ -18,10 +18,11 @@ namespace Hephaestus.ViewModel
 
         public RelayCommand<string> BrowseForArchiveCommand => new RelayCommand<string>(BrowseForArchive);
         public RelayCommand<string> SearchForArchiveCommand => new RelayCommand<string>(SearchForArchive);
+        public RelayCommand IncrementViewCommand => new RelayCommand(IncrementView);
 
         public ObservableCollection<string> MissingArchives { get; set; }
 
-        public bool IsValidating { get; set; }
+        public bool IsValidationComplete { get; set; }
 
         public ValidateModsViewModel(IComponentContext components)
         {
@@ -37,12 +38,14 @@ namespace Hephaestus.ViewModel
             };
         }
 
-        public void BeginValidation()
+        public async void BeginValidation()
         {
-            Task.Factory.StartNew(() =>
+            await Task.Factory.StartNew(() =>
             {
                 MissingArchives = new ObservableCollection<string>(_modListBuilder.BuildModListAndReturnMissing());
             });
+
+            IsValidationComplete = MissingArchives.Count == 0;
         }
 
         public void BrowseForArchive(string archiveName)
@@ -66,11 +69,21 @@ namespace Hephaestus.ViewModel
 
             _modListBuilder.AddMissingArchive(archiveName, dialog.FileName);
             MissingArchives.Remove(archiveName);
+
+            if (MissingArchives.Count == 0)
+            {
+                IsValidationComplete = true;
+            }
         }
 
         public void SearchForArchive(string archiveName)
         {
             Process.Start($"https://google.com/search?q={Path.GetFileNameWithoutExtension(archiveName)}");
+        }
+
+        public void IncrementView()
+        {
+            _viewIndexController.SetCurrentViewIndex(ViewIndex.Transcompiler);
         }
     }
 }
