@@ -86,6 +86,9 @@ namespace Hephaestus.Model.Transcompiler
                 // Write to file
                 File.WriteAllText(modPath, JsonConvert.SerializeObject(mod, Formatting.Indented));
             }
+
+            // Move plugin and modlist information from MO2
+            File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "pluginlist.txt"), Path.Combine());
         }
     }
 }

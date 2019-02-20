@@ -40,8 +40,6 @@ namespace Hephaestus.Model.Transcompiler
             {
                 _logger.Write($"{modObject.ArchivePath} \n");
 
-                var currentIndex = intermediaryModObjects.IndexOf(modObject);
-
                 // Calculate an Md5 hash
                 modObject.Md5 = _md5.Create(modObject.ArchivePath);
 
@@ -66,7 +64,7 @@ namespace Hephaestus.Model.Transcompiler
 
                 // Done with data prep.
                 // Begin matching pairs of files together (archive, mod).
-                progressLog.Report($"#[{currentIndex}] Extracting: '{Path.GetFileName(modObject.ArchivePath)}'");
+                progressLog.Report($"#[{intermediaryModObjects.IndexOf(modObject)}] Extracting: '{Path.GetFileName(modObject.ArchivePath)}'");
 
                 var archive = new ArchiveFile(modObject.ArchivePath);
                 var archiveExtractionPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "extract");
@@ -79,7 +77,6 @@ namespace Hephaestus.Model.Transcompiler
                 var modFiles = Directory.GetFiles(modObject.ModPath, "*.*", SearchOption.AllDirectories);
 
                 // Search for archive and mod file pairs
-
                 var archiveModPairs = new List<ArchiveModFilePair>();
 
                 foreach (var modFile in modFiles)

@@ -86,6 +86,11 @@
     <Compile Include="Interfaces\IViewIndexController.cs" />
     <Compile Include="Interfaces\ITranscompilerViewModel.cs" />
     <Compile Include="NexusLoginViewModel.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="SetupModpackViewModel.cs" />
     <Compile Include="MainPageViewModel.cs" />
     <Compile Include="MainWindowViewModel.cs" />
@@ -98,6 +103,10 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hephaestus.Model\Hephaestus.Model.csproj">

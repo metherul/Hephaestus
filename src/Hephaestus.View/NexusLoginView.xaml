@@ -27,8 +27,15 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width=".2*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width=".2*" />
+        </Grid.ColumnDefinitions>
+
         <Label
             Grid.Row="0"
+            Grid.Column="1"
             Margin="0,10"
             HorizontalAlignment="Center"
             FontSize="30"
@@ -36,64 +43,109 @@
             Welcome to Hephaestus
         </Label>
 
-        <Button
+        <Grid
             Grid.Row="1"
-            Width="Auto"
-            Height="Auto"
+            Grid.Column="1"
             Margin="0,10,0,0"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            materialDesign:RippleAssist.Feedback="Black"
-            materialDesign:ShadowAssist.ShadowDepth="Depth0"
-            Background="White"
-            BorderBrush="Transparent"
-            Command="{Binding LoginToNexusCommand}"
-            IsEnabled="{Binding IsLoggingIn, Converter={StaticResource InverseBoolConverter}}">
-            <Grid Margin="0,10" VerticalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+            HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="0"
+                Width="Auto"
+                Height="Auto"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                materialDesign:RippleAssist.Feedback="Black"
+                materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                Background="White"
+                BorderBrush="Transparent"
+                Command="{Binding LoginToNexusCommand}"
+                IsEnabled="{Binding IsLoggingIn, Converter={StaticResource InverseBoolConverter}}">
+                <Grid Margin="0,10" VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                <materialDesign:PackIcon
-                    Grid.Row="0"
-                    Grid.RowSpan="2"
-                    Grid.Column="0"
-                    Width="40"
-                    Height="40"
-                    Margin="0,0,20,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Foreground="{DynamicResource MaterialDesignBody}"
-                    Kind="Login" />
+                    <materialDesign:PackIcon
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="0"
+                        Width="40"
+                        Height="40"
+                        Margin="0,0,20,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        Kind="Login" />
 
-                <TextBlock
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    FontFamily="{DynamicResource ProductSans}"
-                    FontSize="25"
-                    FontWeight="Bold"
-                    Foreground="{DynamicResource MaterialDesignBody}">
-                    Login to Nexus Mods
-                </TextBlock>
-                <TextBlock
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    FontSize="15"
-                    FontWeight="Regular"
-                    Foreground="{DynamicResource MaterialDesignBody}"
-                    TextWrapping="Wrap">
-                    Login to the Nexus Mods SSO server to continue.
-                </TextBlock>
-            </Grid>
-        </Button>
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        FontFamily="{DynamicResource ProductSans}"
+                        FontSize="25"
+                        FontWeight="Bold"
+                        Foreground="{DynamicResource MaterialDesignBody}">
+                        Login to Nexus Mods
+                    </TextBlock>
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        FontSize="15"
+                        FontWeight="Regular"
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        TextWrapping="Wrap">
+                        Login to the Nexus Mods SSO server to continue.
+                    </TextBlock>
+                </Grid>
+            </Button>
+            <Button
+                Grid.Column="1"
+                Width="Auto"
+                Height="Auto"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Stretch"
+                materialDesign:RippleAssist.Feedback="Black"
+                materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                Background="White"
+                BorderBrush="Transparent"
+                Command="{Binding LoginToNexusCommand}"
+                CommandParameter="true"
+                IsEnabled="{Binding HasSavedApiKey}">
+                <Grid Margin="0,0" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <materialDesign:PackIcon
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="0"
+                        Width="40"
+                        Height="40"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        Kind="PasswordReset" />
+                </Grid>
+            </Button>
+        </Grid>
 
         <ProgressBar
             Grid.Row="2"
+            Grid.Column="1"
             Background="Transparent"
             BorderBrush="Transparent"
             Foreground="{DynamicResource MaterialDesignBody}"
