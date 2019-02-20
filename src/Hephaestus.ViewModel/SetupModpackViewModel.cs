@@ -30,6 +30,7 @@ namespace Hephaestus.ViewModel
         public string ModOrganizerCsv { get; set; }
 
         public bool IsSetupComplete { get; set; }
+        public bool HasInvalidMods { get; set; }
 
         public SetupModpackViewModel(IComponentContext components)
         {
@@ -70,10 +71,12 @@ namespace Hephaestus.ViewModel
             if (missingArchives.Any())
             {
                 MissingArchives = new ObservableCollection<string>(missingArchives);
+                HasInvalidMods = true;
             }
 
             else
             {
+                HasInvalidMods = false;
                 IsSetupComplete = true;
             }
         }
@@ -103,6 +106,7 @@ namespace Hephaestus.ViewModel
             if (MissingArchives.Count == 0)
             {
                 IsSetupComplete = true;
+                HasInvalidMods = false;
             }
         }
 

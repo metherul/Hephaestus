@@ -18,6 +18,7 @@ namespace Hephaestus.Model.Transcompiler
         private readonly IMd5 _md5;
         private readonly INexusApi _nexusApi;
         private readonly IModpackExport _modpackExport;
+        private readonly ILogger _logger;
 
         public Transcompile(IComponentContext components)
         {
@@ -25,6 +26,7 @@ namespace Hephaestus.Model.Transcompiler
             _md5 = components.Resolve<IMd5>();
             _nexusApi = components.Resolve<INexusApi>();
             _modpackExport = components.Resolve<IModpackExport>();
+            _logger = components.Resolve<ILogger>();
         }
 
         public async Task Start(IProgress<string> progressLog)
@@ -36,6 +38,8 @@ namespace Hephaestus.Model.Transcompiler
 
             foreach (var modObject in intermediaryModObjects)
             {
+                _logger.Write($"{modObject.ArchivePath} \n");
+
                 var currentIndex = intermediaryModObjects.IndexOf(modObject);
 
                 // Calculate an Md5 hash

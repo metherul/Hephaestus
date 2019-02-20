@@ -100,7 +100,7 @@ namespace Hephaestus.Model.Nexus
 
         public async Task<GetModsByMd5Result> GetModsByMd5(string md5)
         {
-            _logger.Write($"MD5 Query: {md5}");
+            _logger.Write($"MD5 Query: {md5} \n");
 
             var response = await _httpClient.GetStringAsync($"/v1/games/{_gameName}/mods/md5_search/{md5.ToLower()}.json");
             var apiJson = JArray.Parse(response);

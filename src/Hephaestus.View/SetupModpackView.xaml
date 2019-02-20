@@ -112,65 +112,71 @@
                 BorderBrush="{DynamicResource MaterialDesignBody}"
                 BorderThickness="1"
                 CornerRadius="5">
-                <ListBox
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    materialDesign:RippleAssist.Feedback="Transparent"
-                    FontFamily="{DynamicResource RobotoMono}"
-                    FontSize="15"
-                    ItemsSource="{Binding MissingArchives}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0,-3" HorizontalAlignment="Stretch">
-                                <Grid.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem
-                                            Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}, Path=DataContext.SearchForArchiveCommand}"
-                                            CommandParameter="{Binding}"
-                                            Header="Google Search" />
-                                    </ContextMenu>
-                                </Grid.ContextMenu>
-                                <StackPanel FlowDirection="LeftToRight" Orientation="Horizontal">
-                                    <Border Background="White" CornerRadius="10">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Button
-                                                Width="35"
-                                                Height="30"
-                                                materialDesign:RippleAssist.Feedback="{DynamicResource MaterialDesignBody}"
-                                                materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                                Background="Transparent"
-                                                BorderBrush="Transparent"
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Label
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="20"
+                        Visibility="{Binding HasInvalidMods, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                        Mods with archives that were unable to be automatically found will be listed here.
+                    </Label>
+                    <ListBox
+                        HorizontalContentAlignment="Stretch"
+                        materialDesign:RippleAssist.Feedback="Transparent"
+                        FontFamily="{DynamicResource RobotoMono}"
+                        FontSize="15"
+                        ItemsSource="{Binding MissingArchives}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,-3" HorizontalAlignment="Stretch">
+                                    <Grid.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem
                                                 Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}, Path=DataContext.SearchForArchiveCommand}"
                                                 CommandParameter="{Binding}"
-                                                Style="{DynamicResource MaterialDesignFloatingActionMiniButton}">
-                                                <materialDesign:PackIcon Foreground="{DynamicResource MaterialDesignBody}" Kind="Web" />
-                                            </Button>
-                                            <Button
-                                                Width="35"
-                                                Height="30"
-                                                materialDesign:RippleAssist.Feedback="{DynamicResource MaterialDesignBody}"
-                                                materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                                                Background="Transparent"
-                                                BorderBrush="Transparent"
-                                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}, Path=DataContext.BrowseForArchiveCommand}"
-                                                CommandParameter="{Binding}"
-                                                Style="{DynamicResource MaterialDesignFloatingActionMiniButton}">
-                                                <materialDesign:PackIcon Foreground="{DynamicResource MaterialDesignBody}" Kind="FileFind" />
-                                            </Button>
-                                        </StackPanel>
-                                    </Border>
-                                    <Label
-                                        Margin="5,0,0,0"
-                                        Content="{Binding}"
-                                        FontSize="14" />
-                                </StackPanel>
+                                                Header="Google Search" />
+                                        </ContextMenu>
+                                    </Grid.ContextMenu>
+                                    <StackPanel FlowDirection="LeftToRight" Orientation="Horizontal">
+                                        <Border Background="White" CornerRadius="10">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button
+                                                    Width="35"
+                                                    Height="30"
+                                                    materialDesign:RippleAssist.Feedback="{DynamicResource MaterialDesignBody}"
+                                                    materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                                    Background="Transparent"
+                                                    BorderBrush="Transparent"
+                                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}, Path=DataContext.SearchForArchiveCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{DynamicResource MaterialDesignFloatingActionMiniButton}">
+                                                    <materialDesign:PackIcon Foreground="{DynamicResource MaterialDesignBody}" Kind="Web" />
+                                                </Button>
+                                                <Button
+                                                    Width="35"
+                                                    Height="30"
+                                                    materialDesign:RippleAssist.Feedback="{DynamicResource MaterialDesignBody}"
+                                                    materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                                    Background="Transparent"
+                                                    BorderBrush="Transparent"
+                                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}, Path=DataContext.BrowseForArchiveCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{DynamicResource MaterialDesignFloatingActionMiniButton}">
+                                                    <materialDesign:PackIcon Foreground="{DynamicResource MaterialDesignBody}" Kind="FileFind" />
+                                                </Button>
+                                            </StackPanel>
+                                        </Border>
+                                        <Label
+                                            Margin="5,0,0,0"
+                                            Content="{Binding}"
+                                            FontSize="14" />
+                                    </StackPanel>
 
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
             </Border>
         </Grid>
 
