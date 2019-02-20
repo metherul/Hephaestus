@@ -107,10 +107,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ImportModpackView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -131,9 +127,6 @@
     </Compile>
     <Compile Include="SetupModpackView.xaml.cs">
       <DependentUpon>SetupModpackView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ImportModpackView.xaml.cs">
-      <DependentUpon>ImportModpackView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainPageView.xaml.cs">
       <DependentUpon>MainPageView.xaml</DependentUpon>

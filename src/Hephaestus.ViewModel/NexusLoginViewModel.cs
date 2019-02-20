@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using Autofac;
+﻿using Autofac;
 using GalaSoft.MvvmLight.Command;
 using Hephaestus.Model.Core;
 using Hephaestus.Model.Nexus.Interfaces;
