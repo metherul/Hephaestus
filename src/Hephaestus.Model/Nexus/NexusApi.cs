@@ -40,7 +40,8 @@ namespace Hephaestus.Model.Nexus
             _gameName = gameName.ToString().ToLower();
             _httpClient = new HttpClient()
             {
-                BaseAddress = new Uri("https://api.nexusmods.com")
+                BaseAddress = new Uri("https://api.nexusmods.com"),
+                Timeout = TimeSpan.FromSeconds(5)
             };
 
             if (apiKey != string.Empty)
