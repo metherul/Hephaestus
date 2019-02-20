@@ -19,8 +19,6 @@ namespace Hephaestus.ViewModel
         public RelayCommand OpenDirectoryBrowserCommand => new RelayCommand(OpenDirectoryBrowser);
         public RelayCommand<string> ContextMenuSelectionChangedCommand => new RelayCommand<string>(ContextMenuSelectionChanged);
         public RelayCommand IncrementViewCommand => new RelayCommand(IncrementView);
-        public RelayCommand<string> BrowseForArchiveCommand => new RelayCommand<string>(BrowseForArchive);
-        public RelayCommand<string> SearchForArchiveCommand => new RelayCommand<string>(SearchForArchive);
 
         public ObservableCollection<string> ModOrganizerProfiles { get; set; } 
         public ObservableCollection<string> MissingArchives { get; set; }
@@ -70,40 +68,6 @@ namespace Hephaestus.ViewModel
             _transcompilerSetup.SetModOrganizerProfile(contextMenuItem);
 
             IsSetupComplete = true;
-        }
-
-        public void BrowseForArchive(string archiveName)
-        {
-            var dialog = new OpenFileDialog()
-            {
-                CheckFileExists = true,
-                Multiselect = false,
-                Filter = $"{archiveName}|{archiveName}|All Files (*.*)|*.*",
-                Title = $"Search for: {archiveName}"
-            };
-
-            if (dialog.ShowDialog() != DialogResult.OK || !File.Exists(dialog.FileName)) return;
-
-            var doMatch = _modListBuilder.ValidateArchiveAgainstPath(archiveName, dialog.FileName);
-
-            if (!doMatch)
-            {
-                // Raise notification here
-            }
-
-            _modListBuilder.AddMissingArchive(archiveName, dialog.FileName);
-            MissingArchives.Remove(archiveName);
-
-            if (MissingArchives.Count == 0)
-            {
-                IsSetupComplete = true;
-                HasInvalidMods = false;
-            }
-        }
-
-        public void SearchForArchive(string archiveName)
-        {
-            Process.Start($"https://google.com/search?q={Path.GetFileNameWithoutExtension(archiveName)}");
         }
 
         public void IncrementView()

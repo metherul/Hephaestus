@@ -72,7 +72,7 @@
                                                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
                                                                     Background="Transparent"
                                                                     BorderBrush="Transparent"
-                                                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}, Path=DataContext.SearchForArchiveCommand}"
+                                                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.SearchForArchiveCommand}"
                                                                     CommandParameter="{Binding}"
                                                                     Style="{DynamicResource MaterialDesignFloatingActionMiniButton}">
                                                                     <materialDesign:PackIcon Foreground="{DynamicResource MaterialDesignBody}" Kind="Web" />
@@ -84,7 +84,7 @@
                                                                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
                                                                     Background="Transparent"
                                                                     BorderBrush="Transparent"
-                                                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}, Path=DataContext.BrowseForArchiveCommand}"
+                                                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.BrowseForArchiveCommand}"
                                                                     CommandParameter="{Binding}"
                                                                     Style="{DynamicResource MaterialDesignFloatingActionMiniButton}">
                                                                     <materialDesign:PackIcon Foreground="{DynamicResource MaterialDesignBody}" Kind="FileFind" />
