@@ -50,10 +50,18 @@ namespace Hephaestus.Model.Transcompiler
                 {
                     var md5Response = await _nexusApi.GetModsByMd5(modObject.Md5);
 
-                    modObject.Author = md5Response.AuthorName;
-                    modObject.ModId = md5Response.ModId;
-                    modObject.FileId = md5Response.FileId;
-                    modObject.TrueArchiveName = md5Response.ArchiveName;
+                    if (md5Response == null)
+                    {
+                        modObject.TrueArchiveName = Path.GetFileName(modObject.ArchivePath);
+                    }
+
+                    else
+                    {
+                        modObject.Author = md5Response.AuthorName;
+                        modObject.ModId = md5Response.ModId;
+                        modObject.FileId = md5Response.FileId;
+                        modObject.TrueArchiveName = md5Response.ArchiveName;
+                    }
                 }
 
                 // Done with data prep.

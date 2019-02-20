@@ -102,7 +102,20 @@ namespace Hephaestus.Model.Nexus
         {
             _logger.Write($"MD5 Query: {md5} \n");
 
-            var response = await _httpClient.GetStringAsync($"/v1/games/{_gameName}/mods/md5_search/{md5.ToLower()}.json");
+            var response = string.Empty;
+
+            try
+            {
+                response = await _httpClient.GetStringAsync($"/v1/games/{_gameName}/mods/md5_search/{md5.ToLower()}.json");
+            }
+            catch (Exception e)
+            {
+                _logger.Write($"{e.InnerException} + \n");
+
+                return null;
+            }
+
+
             var apiJson = JArray.Parse(response);
 
             _logger.Write($"success.");
