@@ -25,82 +25,245 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width=".2*" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width=".3*" />
+            <ColumnDefinition Width=".2*" />
         </Grid.ColumnDefinitions>
 
-        <!--  Mod Organizer exe path  -->
-        <StackPanel
+        <!--  Body content  -->
+        <Grid
             Grid.Row="0"
-            Grid.Column="0"
-            VerticalAlignment="Top"
-            IsEnabled="{Binding IsSetupComplete, Converter={StaticResource InverseBoolConverter}}">
-            <Label FontSize="30" FontWeight="Bold">ModOrganizer.exe Path</Label>
-            <Grid>
+            Grid.RowSpan="3"
+            Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!--  First row  -->
+            <Grid Grid.Row="0" Margin="0,0,0,50">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBox
+                <!--  Mod Organizer exe path  -->
+                <StackPanel
                     Grid.Column="0"
-                    FontFamily="{DynamicResource RobotoMono}"
-                    FontSize="15"
-                    IsEnabled="True"
-                    Text="{Binding ModOrganizerExePath, UpdateSourceTrigger=PropertyChanged}" />
-                <Button
+                    VerticalAlignment="Top"
+                    IsEnabled="{Binding IsSetupComplete, Converter={StaticResource InverseBoolConverter}}">
+                    <Label FontSize="30" FontWeight="Bold">ModOrganizer.exe Path</Label>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            Grid.Column="0"
+                            materialDesign:HintAssist.Hint="The path of your modlist's ModOrganizer.exe executable"
+                            FontFamily="{DynamicResource RobotoMono}"
+                            FontSize="15"
+                            IsEnabled="True"
+                            Text="{Binding ModOrganizerExePath, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button
+                            Grid.Column="1"
+                            Margin="10,-10"
+                            materialDesign:RippleAssist.Feedback="Black"
+                            materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"
+                            Command="{Binding OpenDirectoryBrowserCommand}"
+                            Foreground="{DynamicResource MaterialDesignBody}"
+                            Style="{DynamicResource MaterialDesignFloatingActionMiniAccentButton}">
+                            <materialDesign:PackIcon Kind="Folder" />
+                        </Button>
+                    </Grid>
+                </StackPanel>
+
+                <!--  Mod Organizer profile  -->
+                <StackPanel
                     Grid.Column="1"
-                    Margin="10,-10"
-                    materialDesign:RippleAssist.Feedback="Black"
-                    materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    BorderThickness="0"
-                    Command="{Binding OpenDirectoryBrowserCommand}"
-                    Foreground="{DynamicResource MaterialDesignBody}"
-                    Style="{DynamicResource MaterialDesignFloatingActionMiniAccentButton}">
-                    <materialDesign:PackIcon Kind="Folder" />
-                </Button>
+                    VerticalAlignment="Top"
+                    IsEnabled="{Binding IsSetupComplete, Converter={StaticResource InverseBoolConverter}}">
+                    <Label FontSize="30" FontWeight="Bold">
+                        Profile
+                    </Label>
+                    <ComboBox
+                        materialDesign:HintAssist.Hint="Default"
+                        FontFamily="{DynamicResource RobotoMono}"
+                        FontSize="15"
+                        ItemsSource="{Binding ModOrganizerProfiles}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding ContextMenuSelectionChangedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=SelectedItem}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                </StackPanel>
             </Grid>
-        </StackPanel>
 
-        <!--  Mod Organizer profile  -->
-        <StackPanel
-            Grid.Row="0"
-            Grid.Column="1"
-            VerticalAlignment="Top"
-            IsEnabled="{Binding IsSetupComplete, Converter={StaticResource InverseBoolConverter}}">
-            <Label FontSize="30" FontWeight="Bold">
-                Profile
-            </Label>
-            <ComboBox
-                FontFamily="{DynamicResource RobotoMono}"
-                FontSize="15"
-                ItemsSource="{Binding ModOrganizerProfiles}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding ContextMenuSelectionChangedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=SelectedItem}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ComboBox>
-        </StackPanel>
+            <!--  Second row  -->
+            <Grid Grid.Row="1" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="1" Grid.Column="1">
+                <!--  Modpack name  -->
+                <StackPanel
+                    Grid.Column="0"
+                    VerticalAlignment="Top"
+                    materialDesign:HintAssist.Hint="The name of your modpack">
+                    <Label FontSize="25" FontWeight="Bold">Modpack Name</Label>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            Grid.Column="0"
+                            FontFamily="{DynamicResource RobotoMono}"
+                            FontSize="15"
+                            IsEnabled="True"
+                            Text="{Binding ModpackName, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+                </StackPanel>
+            </Grid>
+
+            <!--  Third row  -->
+            <Grid Grid.Row="2" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!--  Author name  -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Top">
+                    <Label FontSize="25" FontWeight="Bold">Author Name</Label>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            Grid.Column="0"
+                            materialDesign:HintAssist.Hint="The name of the modpack's author (you)"
+                            FontFamily="{DynamicResource RobotoMono}"
+                            FontSize="15"
+                            IsEnabled="True"
+                            Text="{Binding ModpackAuthorName, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+                </StackPanel>
+            </Grid>
+
+            <!--  Fourth row  -->
+            <Grid Grid.Row="3" Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!--  Source  -->
+                <StackPanel
+                    Grid.Column="0"
+                    Margin="0,0,20,0"
+                    VerticalAlignment="Top">
+                    <Label FontSize="25" FontWeight="Bold">Modpack Source</Label>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            Grid.Column="0"
+                            materialDesign:HintAssist.Hint="The modpack's homepage (Nexus, Reddit, etc.)"
+                            FontFamily="{DynamicResource RobotoMono}"
+                            FontSize="15"
+                            IsEnabled="True"
+                            Text="{Binding ModpackSource, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Top">
+                    <Label FontSize="25" FontWeight="Bold">Version</Label>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            Grid.Column="0"
+                            materialDesign:HintAssist.Hint="The version of the modpack"
+                            FontFamily="{DynamicResource RobotoMono}"
+                            FontSize="15"
+                            IsEnabled="True"
+                            Text="{Binding ModpackVersion, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+                </StackPanel>
+            </Grid>
+
+            <!--  Next button  -->
             <Button
-                Margin="5,5,5,-10"
-                HorizontalAlignment="Right"
+                Grid.Row="4"
+                Width="Auto"
+                Height="Auto"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
                 materialDesign:RippleAssist.Feedback="Black"
                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                Background="Transparent"
+                Background="White"
                 BorderBrush="Transparent"
-                BorderThickness="0"
-                Command="{Binding OpenDirectoryBrowserCommand}"
-                Foreground="{DynamicResource MaterialDesignBody}"
-                Style="{DynamicResource MaterialDesignFloatingActionMiniAccentButton}">
-                <materialDesign:PackIcon Kind="PlusBox" />
+                Command="{Binding IncrementViewCommand}"
+                Visibility="{Binding IsSetupComplete, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Grid Margin="0,10" VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <materialDesign:PackIcon
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="0"
+                        Width="40"
+                        Height="40"
+                        Margin="0,0,20,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        Kind="CheckBox" />
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        FontFamily="{DynamicResource ProductSans}"
+                        FontSize="25"
+                        FontWeight="Bold"
+                        Foreground="{DynamicResource MaterialDesignBody}">
+                        Next
+                    </TextBlock>
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        FontSize="15"
+                        FontWeight="Regular"
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        TextWrapping="Wrap">
+                        Initial setup has been completed.
+                    </TextBlock>
+                </Grid>
             </Button>
         </Grid>
 
         <!--  Missing mods View  -->
+        <!--
         <Grid
             Grid.Row="2"
             Grid.Column="0"
@@ -178,67 +341,7 @@
                     </ListBox>
                 </Grid>
             </Border>
-        </Grid>
-
-        <!--  Next button  -->
-        <Button
-            Grid.Row="0"
-            Grid.RowSpan="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Width="Auto"
-            Height="Auto"
-            Margin="20,10"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            materialDesign:RippleAssist.Feedback="Black"
-            materialDesign:ShadowAssist.ShadowDepth="Depth0"
-            Background="White"
-            BorderBrush="Transparent"
-            Command="{Binding IncrementViewCommand}"
-            Visibility="{Binding IsSetupComplete, Converter={StaticResource BoolToVisibilityConverter}}">
-            <Grid Margin="0,10" VerticalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <materialDesign:PackIcon
-                    Grid.Row="0"
-                    Grid.RowSpan="2"
-                    Grid.Column="0"
-                    Width="40"
-                    Height="40"
-                    Margin="0,0,20,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Foreground="{DynamicResource MaterialDesignBody}"
-                    Kind="CheckBox" />
-
-                <TextBlock
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    FontFamily="{DynamicResource ProductSans}"
-                    FontSize="25"
-                    FontWeight="Bold"
-                    Foreground="{DynamicResource MaterialDesignBody}">
-                    All mod archives have been found
-                </TextBlock>
-                <TextBlock
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    FontSize="15"
-                    FontWeight="Regular"
-                    Foreground="{DynamicResource MaterialDesignBody}"
-                    TextWrapping="Wrap">
-                    Continue to the next step
-                </TextBlock>
-            </Grid>
-        </Button>
+        </Grid>-->
     </Grid>
 
 </UserControl>

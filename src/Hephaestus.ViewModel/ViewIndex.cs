@@ -5,6 +5,7 @@
         NexusLogin,
         MainPage,
         SetupModpack,
+        ValidateMods,
         Transcompiler
     }
 }

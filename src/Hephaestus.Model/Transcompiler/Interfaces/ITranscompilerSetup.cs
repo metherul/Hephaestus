@@ -8,5 +8,9 @@ namespace Hephaestus.Model.Transcompiler.Interfaces
         List<string> GetModOrganizerProfiles();
         void SetModOrganizerExePath(string path);
         void SetModOrganizerProfile(string profile);
+        void SetModpackName(string modpackName);
+        void SetModpackAuthorName(string authorName);
+        void SetModpackSource(string modpackSource);
+        void SetModpackVersion(string modpackVersion);
     }
 }

@@ -26,8 +26,11 @@ namespace Hephaestus.ViewModel
         public ObservableCollection<string> MissingArchives { get; set; }
 
         public string ModOrganizerExePath { get; set; }
-        public string ModOrganizerProfilePath { get; set; }
-        public string ModOrganizerCsv { get; set; }
+
+        public string ModpackName { get; set; }
+        public string ModpackAuthorName { get; set; }
+        public string ModpackSource { get; set; }
+        public string ModpackVersion { get; set; }
 
         public bool IsSetupComplete { get; set; }
         public bool HasInvalidMods { get; set; }
@@ -117,7 +120,12 @@ namespace Hephaestus.ViewModel
 
         public void IncrementView()
         {
-            _viewIndexController.SetCurrentViewIndex(ViewIndex.Transcompiler);
+            _transcompilerSetup.SetModpackName(ModpackName);
+            _transcompilerSetup.SetModpackAuthorName(ModpackAuthorName);
+            _transcompilerSetup.SetModpackSource(ModpackSource);
+            _transcompilerSetup.SetModpackVersion(ModpackVersion);
+
+            _viewIndexController.SetCurrentViewIndex(ViewIndex.ValidateMods);
         }
     }
 }

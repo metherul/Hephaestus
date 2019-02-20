@@ -96,6 +96,7 @@
     <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TranscompilerViewModel.cs" />
+    <Compile Include="ValidateModsViewModel.cs" />
     <Compile Include="ViewIndex.cs" />
     <Compile Include="ViewIndexController.cs" />
     <Compile Include="ViewModelBase.cs" />

@@ -95,6 +95,9 @@
     <Compile Include="TranscompilerView.xaml.cs">
       <DependentUpon>TranscompilerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ValidateModsView.xaml.cs">
+      <DependentUpon>ValidateModsView.xaml</DependentUpon>
+    </Compile>
     <Page Include="Converters\ConvertersResource.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -140,6 +143,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TranscompilerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ValidateModsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

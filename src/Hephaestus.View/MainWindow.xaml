@@ -65,6 +65,10 @@
             </materialDesign:TransitionerSlide>
 
             <materialDesign:TransitionerSlide>
+                <local:ValidateModsView />
+            </materialDesign:TransitionerSlide>
+
+            <materialDesign:TransitionerSlide>
                 <local:TranscompilerView />
             </materialDesign:TransitionerSlide>
         </materialDesign:Transitioner>
