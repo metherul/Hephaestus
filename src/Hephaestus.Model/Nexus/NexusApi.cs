@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
@@ -19,8 +20,10 @@ namespace Hephaestus.Model.Nexus
         private readonly ILogger _logger;
 
         public delegate void HasLoggedIn();
+        public delegate void RequestLimitUpdated(int currentLimit);
 
         public event HasLoggedIn HasLoggedInEvent;
+        public event RequestLimitUpdated RequestLimitUpdatedEvent;
 
         private HttpClient _httpClient;
 
@@ -29,6 +32,8 @@ namespace Hephaestus.Model.Nexus
 
         private bool _isPremium;
         private bool _isLoggedIn;
+
+        private int _remainingDailyRequests { get; set; }
 
         public NexusApi(IComponentContext components)
         {
@@ -103,11 +108,14 @@ namespace Hephaestus.Model.Nexus
         {
             _logger.Write($"MD5 Query: {md5} \n");
 
-            var response = string.Empty;
+            var response = new HttpResponseMessage();
 
             try
             {
-                response = await _httpClient.GetStringAsync($"/v1/games/{_gameName}/mods/md5_search/{md5.ToLower()}.json");
+                response = await _httpClient.GetAsync($"/v1/games/{_gameName}/mods/md5_search/{md5.ToLower()}.json");
+                _remainingDailyRequests = Convert.ToInt32(response.Headers.GetValues("X-RL-Daily-Remaining").ToList().First());
+
+                RequestLimitUpdatedEvent.Invoke(_remainingDailyRequests);
             }
             catch (Exception e)
             {
@@ -117,7 +125,7 @@ namespace Hephaestus.Model.Nexus
             }
 
 
-            var apiJson = JArray.Parse(response);
+            var apiJson = JArray.Parse(response.Content.ReadAsStringAsync().Result);
 
             _logger.Write($"success.");
 
