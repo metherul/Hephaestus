@@ -69,8 +69,6 @@ namespace Hephaestus.ViewModel
 
             _transcompilerSetup.SetModOrganizerProfile(contextMenuItem);
 
-            var missingArchives = _modListBuilder.BuildModListAndReturnMissing();
-
             IsSetupComplete = true;
         }
 

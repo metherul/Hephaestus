@@ -63,6 +63,7 @@
                 Background="White"
                 BorderBrush="Transparent"
                 Command="{Binding LoginToNexusCommand}"
+                CommandParameter="false"
                 IsEnabled="{Binding IsLoggingIn, Converter={StaticResource InverseBoolConverter}}">
                 <Grid Margin="0,10" VerticalAlignment="Stretch">
                     <Grid.ColumnDefinitions>

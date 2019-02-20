@@ -30,9 +30,9 @@ namespace Hephaestus.ViewModel
             };
         }
 
-        public async void BeginValidation()
+        public void BeginValidation()
         {
-            await Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(() =>
             {
                 MissingArchives = new ObservableCollection<string>(_modListBuilder.BuildModListAndReturnMissing());
             });
