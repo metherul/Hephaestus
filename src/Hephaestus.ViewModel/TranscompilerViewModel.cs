@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Autofac;
+using Hephaestus.Model.Transcompiler;
 using Hephaestus.Model.Transcompiler.Interfaces;
 using Hephaestus.ViewModel.Interfaces;
 
@@ -14,7 +15,7 @@ namespace Hephaestus.ViewModel
         private readonly IViewIndexController _viewIndexController;
         private readonly ITranscompile _transcompile;
 
-        public ObservableCollection<string> ProgressLog { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<IntermediaryModObject> ProgressLog { get; set; } = new ObservableCollection<IntermediaryModObject>();
 
         public TranscompilerViewModel(IComponentContext components)
         {
@@ -32,16 +33,15 @@ namespace Hephaestus.ViewModel
 
         public void BeginTranscompile()
         {
-            var progressLog = new Progress<string>();
+            var progressLog = new Progress<TranscompileProgress>();
 
             progressLog.ProgressChanged += (sender, s) =>
             {
-                if (s.StartsWith("#"))
+                if (s.CurrentTranscompileStep == CurrentTranscompileStep.NexusApi)
                 {
-                    ProgressLog = new ObservableCollection<string>();
+
                 }
 
-                ProgressLog.Add(s);
             };
 
             Task.Factory.StartNew(() =>

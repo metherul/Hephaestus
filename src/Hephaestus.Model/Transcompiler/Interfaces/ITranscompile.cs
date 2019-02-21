@@ -6,6 +6,6 @@ namespace Hephaestus.Model.Transcompiler.Interfaces
 {
     public interface ITranscompile : IModel
     {
-        Task Start(IProgress<string> progressLog);
+        Task Start(IProgress<TranscompileProgress> progressLog);
     }
 }

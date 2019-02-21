@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:MaterialDesignThemes.Wpf.Converters;assembly=MaterialDesignThemes.Wpf"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:local="clr-namespace:Hephaestus.View"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -18,51 +19,111 @@
     TextOptions.TextFormattingMode="Ideal"
     TextOptions.TextRenderingMode="Auto"
     mc:Ignorable="d">
-    <Grid Margin="40,20">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width=".3*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width=".3*" />
-        </Grid.ColumnDefinitions>
+    <Grid Margin="40,10">
+        <Grid Grid.Column="0" IsEnabled="{Binding IsSetupComplete, Converter={StaticResource InverseBoolConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Label
-            Grid.Row="0"
-            Grid.Column="1"
-            HorizontalAlignment="Center"
-            FontSize="30"
-            FontWeight="Bold">
-            Transcompilation
-        </Label>
-        <Label
-            Grid.Row="1"
-            Grid.Column="1"
-            Margin="0,0,0,20"
-            HorizontalAlignment="Center"
-            FontFamily="{DynamicResource RobotoMono}">
-            Please wait. This may take some time.
-        </Label>
-        <ScrollViewer
-            Grid.Row="2"
-            Grid.Column="1"
-            vm:ScrollableScrollViewer.AutoScroll="True"
-            VerticalScrollBarVisibility="Visible">
-            <ItemsControl
-                FontFamily="{DynamicResource RobotoMono}"
-                FontSize="12"
-                ItemsSource="{Binding ProgressLog}" />
-        </ScrollViewer>
-        <ProgressBar
-            Grid.Row="3"
-            Grid.Column="1"
-            Background="Transparent"
-            BorderBrush="Transparent"
-            Foreground="{DynamicResource MaterialDesignBody}"
-            IsIndeterminate="True" />
+            <StackPanel Grid.Row="0" Margin="0,0,0,5">
+                <Label FontSize="30" Visibility="{Binding IsValidationComplete, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                    Your modpack is being generated.
+                </Label>
+                <Label
+                    Margin="0,-5,0,0"
+                    FontSize="18"
+                    Opacity=".5"
+                    Visibility="{Binding IsValidationComplete, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                    Hang tight, this will take some time.
+                </Label>
+            </StackPanel>
+
+            <Border
+                Grid.Row="1"
+                Padding="2"
+                BorderBrush="{DynamicResource MaterialDesignBody}"
+                BorderThickness="1"
+                CornerRadius="5"
+                Visibility="{Binding IsValidationComplete, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                <Grid
+                    Margin="5"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch">
+                    <ScrollViewer HorizontalContentAlignment="Stretch" Visibility="{Binding IsValidationComplete, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                        <ItemsControl
+                            HorizontalContentAlignment="Stretch"
+                            materialDesign:RippleAssist.Feedback="Transparent"
+                            FontFamily="{DynamicResource RobotoMono}"
+                            FontSize="15"
+                            ItemsSource="{Binding MissingArchives}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,2" HorizontalAlignment="Stretch">
+                                        <Expander Header="{Binding}">
+                                            <Expander.HeaderTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel
+                                                        Margin="-5"
+                                                        FlowDirection="LeftToRight"
+                                                        Orientation="Horizontal">
+                                                        <Border Background="White" CornerRadius="10">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Button
+                                                                    Width="32"
+                                                                    Height="32"
+                                                                    materialDesign:RippleAssist.Feedback="{DynamicResource MaterialDesignBody}"
+                                                                    materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                                                    Background="Transparent"
+                                                                    BorderBrush="Transparent"
+                                                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.SearchForArchiveCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Style="{DynamicResource MaterialDesignFloatingActionMiniButton}">
+                                                                    <materialDesign:PackIcon Foreground="{DynamicResource MaterialDesignBody}" Kind="Web" />
+                                                                </Button>
+                                                                <Button
+                                                                    Width="32"
+                                                                    Height="32"
+                                                                    materialDesign:RippleAssist.Feedback="{DynamicResource MaterialDesignBody}"
+                                                                    materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                                                                    Background="Transparent"
+                                                                    BorderBrush="Transparent"
+                                                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.BrowseForArchiveCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Style="{DynamicResource MaterialDesignFloatingActionMiniButton}">
+                                                                    <materialDesign:PackIcon Foreground="{DynamicResource MaterialDesignBody}" Kind="FileFind" />
+                                                                </Button>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Label
+                                                            Margin="5,0,0,0"
+                                                            Content="{Binding}"
+                                                            FontSize="15" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </Expander.HeaderTemplate>
+
+                                            <Expander.Content>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width=".3*" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width=".3*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="1">
+                                                        <TextBox materialDesign:HintAssist.Hint="Mod Name" />
+                                                        <TextBox materialDesign:HintAssist.Hint="Archive Path" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Expander.Content>
+                                        </Expander>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

@@ -22,7 +22,19 @@ namespace Hephaestus.Model.Transcompiler
         public async Task ExportModpack()
         {
             var intermediaryModObjects = _transcompilerBase.IntermediaryModObjects;
-            var modpackDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test modpack");
+
+            // Create the modpack header
+            var modpackHeader = new Header()
+            {
+                Author = (_transcompilerBase.ModpackAuthorName == "") ? "Anon" : _transcompilerBase.ModpackAuthorName,
+                ModInstallFolders = new List<string>(){ _transcompilerBase.ProfileName },
+                Name = (_transcompilerBase.ModpackName == "") ? "Unknown" : _transcompilerBase.ModpackName,
+                SourceUrl = (_transcompilerBase.ModpackSource),
+                TargetGame = "Skyrim",
+                Version = (_transcompilerBase.ModpackVersion == "") ? "1.0" : _transcompilerBase.ModpackVersion
+            };
+
+            var modpackDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, modpackHeader.Name);
 
             if (Directory.Exists(modpackDirectory))
             {
@@ -30,17 +42,6 @@ namespace Hephaestus.Model.Transcompiler
             }
 
             Directory.CreateDirectory(modpackDirectory);
-
-            // Create the modpack header
-            var modpackHeader = new Header()
-            {
-                Author = "",
-                ModInstallFolders = new List<string>() {"mods"},
-                Name = "Some Modpack",
-                SourceUrl = "",
-                TargetGame = "Skyrim",
-                Version = "1.0"
-            };
 
             // Write to modpack directory
             var headerPath = Path.Combine(modpackDirectory, "header.json");
@@ -53,7 +54,7 @@ namespace Hephaestus.Model.Transcompiler
             File.WriteAllText(headerPath, JsonConvert.SerializeObject(modpackHeader, Formatting.Indented));
 
             // Create the "mods" subdirectory
-            var modsDirectory = Path.Combine(modpackDirectory, "mods");
+            var modsDirectory = Path.Combine(modpackDirectory, modpackHeader.ModInstallFolders.First());
             Directory.CreateDirectory(modsDirectory);
 
             foreach (var modObject in intermediaryModObjects)
@@ -88,7 +89,8 @@ namespace Hephaestus.Model.Transcompiler
             }
 
             // Move plugin and modlist information from MO2
-            File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "pluginlist.txt"), Path.Combine());
+            File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "plugins.txt"), Path.Combine(modpackDirectory, "plugins.txt"));
+            File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "modlist.txt"), Path.Combine(modpackDirectory, "modlist.txt"));
         }
     }
 }

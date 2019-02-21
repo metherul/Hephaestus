@@ -9,6 +9,7 @@ namespace Hephaestus.Model.Transcompiler
         public string ModsDirectoryPath { get; set; }
         public string ProfilesDirectoryPath { get; set; }
         public string DownloadsDirectoryPath { get; set; }
+        public string ProfileName { get; set; }
 
         public string ModpackName { get; set; }
         public string ModpackAuthorName { get; set; }

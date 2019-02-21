@@ -13,6 +13,7 @@ namespace Hephaestus.Model.Transcompiler.Interfaces
         string ModMetaFileName { get; set; }
         string DownloadsDirectoryPath { get; set; }
         string MOMetaFileName { get; set; }
+        string ProfileName { get; set; }
         List<IntermediaryModObject> IntermediaryModObjects { get; set; }
 
         string ModpackName { get; set; }

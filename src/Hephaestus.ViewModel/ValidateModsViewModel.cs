@@ -23,6 +23,7 @@ namespace Hephaestus.ViewModel
         public ObservableCollection<string> MissingArchives { get; set; }
 
         public bool IsValidationComplete { get; set; }
+        public bool IsValidating { get; set; }
 
         public ValidateModsViewModel(IComponentContext components)
         {

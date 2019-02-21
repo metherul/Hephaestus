@@ -29,7 +29,7 @@ namespace Hephaestus.Model.Transcompiler
             _logger = components.Resolve<ILogger>();
         }
 
-        public async Task Start(IProgress<string> progressLog)
+        public async Task Start(IProgress<TranscompileProgress> progressLog)
         {
             var intermediaryModObjects = _transcompilerBase.IntermediaryModObjects;
 
@@ -64,14 +64,11 @@ namespace Hephaestus.Model.Transcompiler
 
                 // Done with data prep.
                 // Begin matching pairs of files together (archive, mod).
-                progressLog.Report($"#[{intermediaryModObjects.IndexOf(modObject)}] Extracting: '{Path.GetFileName(modObject.ArchivePath)}'");
 
                 var archive = new ArchiveFile(modObject.ArchivePath);
                 var archiveExtractionPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "extract");
 
                 archive.Extract(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "extract"));
-
-                progressLog.Report($"[] Indexing files...");
 
                 var archiveFiles = Directory.GetFiles(archiveExtractionPath, "*.*", SearchOption.AllDirectories).Select(x => new FileInfo(x)).ToList();
                 var modFiles = Directory.GetFiles(modObject.ModPath, "*.*", SearchOption.AllDirectories);
@@ -82,9 +79,6 @@ namespace Hephaestus.Model.Transcompiler
                 foreach (var modFile in modFiles)
                 {
                     var modFileInfo = new FileInfo(modFile);
-
-                    progressLog.Report($"[!] Searching for archive match to: '{modFileInfo.Name}'");
-
                     var archiveModPair = new ArchiveModFilePair(modObject.ArchivePath, modObject.ModPath);
 
                     // Attempt to find a match by file length
@@ -92,8 +86,6 @@ namespace Hephaestus.Model.Transcompiler
 
                     if (possibleArchiveMatches.Any() && possibleArchiveMatches.Count() == 1)
                     {
-                        progressLog.Report($"[!] Match found: {possibleArchiveMatches.First().Name}");
-
                         archiveModPairs.Add(archiveModPair.New(possibleArchiveMatches.First().FullName, modFileInfo.FullName));
                         continue;
                     }
@@ -110,12 +102,8 @@ namespace Hephaestus.Model.Transcompiler
 
                     foreach (var possibleArchiveMatch in possibleArchiveMatches)
                     {
-                        progressLog.Report($"[?] Possible match: {possibleArchiveMatch.Name}");
-
                         if (AreFilesEqual(possibleArchiveMatch, modFileInfo))
                         {
-                            progressLog.Report($"[!] Match found: {possibleArchiveMatch.Name}");
-
                             archiveModPairs.Add(archiveModPair.New(possibleArchiveMatch.FullName, modFileInfo.FullName));
                             break;
                         }
@@ -128,11 +116,8 @@ namespace Hephaestus.Model.Transcompiler
             }
 
             // Write modpack to file
-            progressLog.Report("Writing modpack to file...");
 
             await _modpackExport.ExportModpack();
-
-            progressLog.Report("[########] Progress complete. Phin stnkco");
         }
 
         private bool AreFilesEqual(FileInfo archiveFile, FileInfo modFile)
@@ -161,5 +146,21 @@ namespace Hephaestus.Model.Transcompiler
 
             return true;
         }
+    }
+
+    public class TranscompileProgress
+    {
+        public int TotalModCount { get; set; }
+        public int CurrentModCount { get; set; }
+        public IntermediaryModObject CurrentModObject { get; set; }
+        public CurrentTranscompileStep CurrentTranscompileStep { get; set; }
+    }
+
+    public enum CurrentTranscompileStep
+    {
+        NexusApi,
+        Extraction,
+        Indexing,
+        Matching
     }
 }

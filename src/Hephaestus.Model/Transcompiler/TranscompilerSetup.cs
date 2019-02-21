@@ -35,6 +35,8 @@ namespace Hephaestus.Model.Transcompiler
         {
             _transcompilerBase.ChosenProfilePath =
                 Path.Combine(_transcompilerBase.ProfilesDirectoryPath, profileName);
+
+            _transcompilerBase.ProfileName = profileName;
         }
 
         public void SetModpackName(string modpackName)
