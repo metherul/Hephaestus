@@ -29,7 +29,7 @@ namespace Hephaestus.Model.Transcompiler
             _logger = components.Resolve<ILogger>();
         }
 
-        public async Task Start(IProgress<TranscompileProgress> progressLog)
+        public async Task Start(IProgress<string> progressLog)
         {
             var intermediaryModObjects = _transcompilerBase.IntermediaryModObjects;
 
@@ -38,23 +38,31 @@ namespace Hephaestus.Model.Transcompiler
 
             foreach (var modObject in intermediaryModObjects)
             {
+                progressLog.Report($"[####] {new DirectoryInfo(modObject.ModPath).Name}");
+                progressLog.Report($"[INFO] Archive: {new FileInfo(modObject.ArchivePath).Name}");
+
                 _logger.Write($"{modObject.ArchivePath} \n");
 
                 // Calculate an Md5 hash
+                progressLog.Report("[INFO] Calculating MD5...");
                 modObject.Md5 = _md5.Create(modObject.ArchivePath);
+                progressLog.Report("[DONE]");
 
                 // Get ModId and FileId data
+                progressLog.Report("[INFO] Attempting Nexus API request...");
                 if (modObject.IsNexusSource)
                 {
                     var md5Response = await _nexusApi.GetModsByMd5(modObject.Md5);
 
                     if (md5Response == null)
                     {
+                        progressLog.Report("[WARN] API request failed. This is generally not an issue.");
                         modObject.TrueArchiveName = Path.GetFileName(modObject.ArchivePath);
                     }
 
                     else
                     {
+                        progressLog.Report("[DONE]");
                         modObject.Author = md5Response.AuthorName;
                         modObject.ModId = md5Response.ModId;
                         modObject.FileId = md5Response.FileId;
@@ -65,19 +73,33 @@ namespace Hephaestus.Model.Transcompiler
                 // Done with data prep.
                 // Begin matching pairs of files together (archive, mod).
 
+                progressLog.Report("[INFO] Starting analysis...");
+
                 var archive = new ArchiveFile(modObject.ArchivePath);
                 var archiveExtractionPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "extract");
 
-                archive.Extract(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "extract"));
+                if (Directory.Exists(archiveExtractionPath))
+                {
+                    Directory.Delete(archiveExtractionPath, true);
+                }
 
+                progressLog.Report($"[INFO] Extracting: {Path.GetFileName(modObject.ArchivePath)}. This may take some time...");
+                archive.Extract(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "extract"));
+                progressLog.Report("[DONE] ");
+
+                progressLog.Report("[INFO] Indexing mod and archive files...");
                 var archiveFiles = Directory.GetFiles(archiveExtractionPath, "*.*", SearchOption.AllDirectories).Select(x => new FileInfo(x)).ToList();
                 var modFiles = Directory.GetFiles(modObject.ModPath, "*.*", SearchOption.AllDirectories);
+                progressLog.Report("[DONE]");
 
                 // Search for archive and mod file pairs
                 var archiveModPairs = new List<ArchiveModFilePair>();
 
+                progressLog.Report("[INFO] Starting primary mod file analysis...");
                 foreach (var modFile in modFiles)
                 {
+                    progressLog.Report($"[INFO] Searching for archive file match to: {Path.GetFileName(modFile)}");
+
                     var modFileInfo = new FileInfo(modFile);
                     var archiveModPair = new ArchiveModFilePair(modObject.ArchivePath, modObject.ModPath);
 
@@ -86,10 +108,13 @@ namespace Hephaestus.Model.Transcompiler
 
                     if (possibleArchiveMatches.Any() && possibleArchiveMatches.Count() == 1)
                     {
+                        progressLog.Report($"[DONE] Match found: {possibleArchiveMatches.First().Name}");
+
                         archiveModPairs.Add(archiveModPair.New(possibleArchiveMatches.First().FullName, modFileInfo.FullName));
                         continue;
                     }
 
+                    progressLog.Report("[INFO] Using advanced match algorithm...");
                     // More than one match. Fall back to advanced identification.
                     if (possibleArchiveMatches.Count(x => x.Name == modFileInfo.Name) == 1)
                     {
@@ -102,8 +127,12 @@ namespace Hephaestus.Model.Transcompiler
 
                     foreach (var possibleArchiveMatch in possibleArchiveMatches)
                     {
+                        progressLog.Report($"[INFO] Checking possible match: {possibleArchiveMatch.Name}");
+
                         if (AreFilesEqual(possibleArchiveMatch, modFileInfo))
                         {
+                            progressLog.Report($"[DONE] Match found: {possibleArchiveMatch.Name}");
+
                             archiveModPairs.Add(archiveModPair.New(possibleArchiveMatch.FullName, modFileInfo.FullName));
                             break;
                         }
@@ -111,18 +140,27 @@ namespace Hephaestus.Model.Transcompiler
 
                     if (!archiveModPairs.Contains(archiveModPair))
                     {
+                        progressLog.Report($"[WARN] {Path.GetFileName(modFile)} has no valid match.");
+                        progressLog.Report("[DONE]");
                         _logger.Write($"{modFile} had no valid match. \n");
                     }
                 }
 
                 modObject.ArchiveModFilePairs = archiveModPairs;
 
+                progressLog.Report("[INFO] Removing extracted files...");
                 Directory.Delete(archiveExtractionPath, true);
+                progressLog.Report("[DONE]");
             }
 
             // Write modpack to file
 
+            progressLog.Report("[INFO] Exporting to modpack...");
             await _modpackExport.ExportModpack();
+            progressLog.Report("[DONE]");
+
+            progressLog.Report("");
+            progressLog.Report("[INFO] OPERATION COMPLETED");
         }
 
         private bool AreFilesEqual(FileInfo archiveFile, FileInfo modFile)
@@ -158,6 +196,7 @@ namespace Hephaestus.Model.Transcompiler
         public int TotalModCount { get; set; }
         public int CurrentModCount { get; set; }
         public IntermediaryModObject CurrentModObject { get; set; }
+        public FileInfo CurrentModFile { get; set; }
         public CurrentTranscompileStep CurrentTranscompileStep { get; set; }
     }
 

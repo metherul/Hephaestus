@@ -5,6 +5,6 @@ namespace Hephaestus.ViewModel.Interfaces
 {
     public interface ITranscompilerViewModel : IViewModel
     {
-        ObservableCollection<IntermediaryModObject> ProgressLog { get; set; }
+        ObservableCollection<string> ProgressLog { get; set; }
     }
 }

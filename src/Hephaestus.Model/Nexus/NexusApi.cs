@@ -114,12 +114,10 @@ namespace Hephaestus.Model.Nexus
             {
                 response = await _httpClient.GetAsync($"/v1/games/{_gameName}/mods/md5_search/{md5.ToLower()}.json");
                 _remainingDailyRequests = Convert.ToInt32(response.Headers.GetValues("X-RL-Daily-Remaining").ToList().First());
-
-                RequestLimitUpdatedEvent.Invoke(_remainingDailyRequests);
             }
             catch (Exception e)
             {
-                _logger.Write($"{e.InnerException} + \n");
+                _logger.Write($"Nexus API request failed: {e.InnerException} \n");
 
                 return null;
             }

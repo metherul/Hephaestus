@@ -15,7 +15,7 @@ namespace Hephaestus.ViewModel
         private readonly IViewIndexController _viewIndexController;
         private readonly ITranscompile _transcompile;
 
-        public ObservableCollection<IntermediaryModObject> ProgressLog { get; set; } = new ObservableCollection<IntermediaryModObject>();
+        public ObservableCollection<string> ProgressLog { get; set; } = new ObservableCollection<string>();
 
         public TranscompilerViewModel(IComponentContext components)
         {
@@ -33,15 +33,19 @@ namespace Hephaestus.ViewModel
 
         public void BeginTranscompile()
         {
-            var progressLog = new Progress<TranscompileProgress>();
+            var progressLog = new Progress<string>();
 
             progressLog.ProgressChanged += (sender, s) =>
             {
-                if (s.CurrentTranscompileStep == CurrentTranscompileStep.NexusApi)
+                if (s.StartsWith("[####]"))
                 {
-
+                    ProgressLog = new ObservableCollection<string> {s};
                 }
 
+                else
+                {
+                    ProgressLog.Add(s);
+                }
             };
 
             Task.Factory.StartNew(() =>
