@@ -44,7 +44,7 @@ namespace Hephaestus.Model.Transcompiler
             Directory.CreateDirectory(modpackDirectory);
 
             // Write to modpack directory
-            var headerPath = Path.Combine(modpackDirectory, "header.json");
+            var headerPath = Path.Combine(modpackDirectory, "modpack.json");
 
             if (!File.Exists(headerPath))
             {
