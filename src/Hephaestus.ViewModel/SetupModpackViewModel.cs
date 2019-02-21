@@ -24,10 +24,10 @@ namespace Hephaestus.ViewModel
 
         public string ModOrganizerExePath { get; set; }
 
-        public string ModpackName { get; set; }
-        public string ModpackAuthorName { get; set; }
-        public string ModpackSource { get; set; }
-        public string ModpackVersion { get; set; }
+        public string ModpackName { get; set; } = "";
+        public string ModpackAuthorName { get; set; } = "";
+        public string ModpackSource { get; set; } = "";
+        public string ModpackVersion { get; set; } = "";
 
         public bool IsSetupComplete { get; set; }
 

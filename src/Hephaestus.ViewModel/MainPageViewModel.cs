@@ -15,16 +15,6 @@ namespace Hephaestus.ViewModel
         public MainPageViewModel(IComponentContext components)
         {
             _viewIndexController = components.Resolve<IViewIndexController>();
-
-            if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "debug.txt")))
-            {
-                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "debug.txt"));
-            }
-
-            AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
-            {
-                File.AppendAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "debug.txt"), eventArgs.Exception.Message);
-            };
         }
 
         private void IncrementView(ViewIndex viewIndex)
