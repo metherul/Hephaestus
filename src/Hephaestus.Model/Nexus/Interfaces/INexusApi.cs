@@ -10,6 +10,7 @@ namespace Hephaestus.Model.Nexus.Interfaces
         event NexusApi.HasLoggedIn HasLoggedInEvent;
 
         string ApiKey();
+        int RemainingDailyRequests { get; set; }
         Task<GetModsByMd5Result> GetModsByMd5(string md5);
         Task New(GameName gameName, string apiKey = "");
     }

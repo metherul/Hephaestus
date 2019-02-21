@@ -49,7 +49,7 @@ namespace Hephaestus.Model.Transcompiler
                 progressLog.Report("[DONE]");
 
                 // Get ModId and FileId data
-                progressLog.Report("[INFO] Attempting Nexus API request...");
+                progressLog.Report($"[INFO] Attempting Nexus API request ({_nexusApi.RemainingDailyRequests} daily requests remaining)...");
                 if (modObject.IsNexusSource)
                 {
                     var md5Response = await _nexusApi.GetModsByMd5(modObject.Md5);

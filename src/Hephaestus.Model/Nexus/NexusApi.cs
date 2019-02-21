@@ -33,7 +33,7 @@ namespace Hephaestus.Model.Nexus
         private bool _isPremium;
         private bool _isLoggedIn;
 
-        private int _remainingDailyRequests { get; set; }
+        public int RemainingDailyRequests { get; set; }
 
         public NexusApi(IComponentContext components)
         {
@@ -57,9 +57,11 @@ namespace Hephaestus.Model.Nexus
                 _httpClient.DefaultRequestHeaders.Add("APIKEY", _apiKey);
 
                 // Get the premium status of the account
-                var response = await _httpClient.GetStringAsync("/v1/users/validate.json");
-                _isPremium = (bool)JObject.Parse(response)["is_premium"];
+                var response = await _httpClient.GetAsync("/v1/users/validate.json");
+                _isPremium = (bool)JObject.Parse(response.Content.ReadAsStringAsync().Result)["is_premium"];
                 _isLoggedIn = true;
+
+                RemainingDailyRequests = Convert.ToInt32(response.Headers.GetValues("X-RL-Daily-Remaining").ToList().First());
 
                 HasLoggedInEvent.Invoke();
 
@@ -83,9 +85,11 @@ namespace Hephaestus.Model.Nexus
                 _httpClient.DefaultRequestHeaders.Add("APIKEY", _apiKey);
 
                 // Get the premium status of the account
-                var response = _httpClient.GetStringAsync("/v1/users/validate.json").Result;
-                _isPremium = (bool) JObject.Parse(response)["is_premium"];
+                var response = _httpClient.GetAsync("/v1/users/validate.json").Result;
+                _isPremium = (bool) JObject.Parse(response.Content.ReadAsStringAsync().Result)["is_premium"];
                 _isLoggedIn = true;
+
+                RemainingDailyRequests = Convert.ToInt32(response.Headers.GetValues("X-RL-Daily-Remaining").ToList().First());
 
                 HasLoggedInEvent.Invoke();
             };
@@ -113,7 +117,7 @@ namespace Hephaestus.Model.Nexus
             try
             {
                 response = await _httpClient.GetAsync($"/v1/games/{_gameName}/mods/md5_search/{md5.ToLower()}.json");
-                _remainingDailyRequests = Convert.ToInt32(response.Headers.GetValues("X-RL-Daily-Remaining").ToList().First());
+                RemainingDailyRequests = Convert.ToInt32(response.Headers.GetValues("X-RL-Daily-Remaining").ToList().First());
             }
             catch (Exception e)
             {
