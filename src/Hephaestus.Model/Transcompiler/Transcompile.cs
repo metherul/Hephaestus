@@ -108,6 +108,11 @@ namespace Hephaestus.Model.Transcompiler
                             break;
                         }
                     }
+
+                    if (!archiveModPairs.Contains(archiveModPair))
+                    {
+                        _logger.Write($"{modFile} had no valid match. \n");
+                    }
                 }
 
                 modObject.ArchiveModFilePairs = archiveModPairs;
