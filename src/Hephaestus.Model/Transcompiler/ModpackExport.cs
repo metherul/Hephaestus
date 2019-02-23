@@ -93,6 +93,11 @@ namespace Hephaestus.Model.Transcompiler
             File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "plugins.txt"), Path.Combine(modpackDirectory, "plugins.txt"));
             File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "modlist.txt"), Path.Combine(modpackDirectory, "modlist.txt"));
 
+            if (File.Exists(modpackDirectory + ".auto"))
+            {
+                File.Delete(modpackDirectory + ".auto");
+            }
+
             // Move to .auto modpack file
             using (var zip = new ZipFile())
             {
