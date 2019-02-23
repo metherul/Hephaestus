@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Hephaestus.Model.Modpack.ModpackBase;
 using Hephaestus.Model.Transcompiler.Interfaces;
+using Ionic.Zip;
 using Newtonsoft.Json;
 
 namespace Hephaestus.Model.Transcompiler
@@ -91,6 +92,19 @@ namespace Hephaestus.Model.Transcompiler
             // Move plugin and modlist information from MO2
             File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "plugins.txt"), Path.Combine(modpackDirectory, "plugins.txt"));
             File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "modlist.txt"), Path.Combine(modpackDirectory, "modlist.txt"));
+
+            // Move to .auto modpack file
+            using (var zip = new ZipFile())
+            {
+                foreach (var file in Directory.GetFiles(modpackDirectory, "*.*", SearchOption.AllDirectories))
+                {
+                    var fileDirectory = Path.GetDirectoryName(file).Replace(modpackDirectory, "");
+
+                    zip.AddFile(file, fileDirectory);
+                }
+
+                zip.Save(modpackDirectory + ".auto");
+            }
         }
     }
 }
