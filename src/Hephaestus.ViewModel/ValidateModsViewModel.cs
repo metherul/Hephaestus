@@ -89,7 +89,8 @@ namespace Hephaestus.ViewModel
         {
             var directoryBrowser = new VistaFolderBrowserDialog()
             {
-                Description = "Select a folder to analyze."
+                Description = "Select a folder to analyze.",
+                UseDescriptionForTitle = true
             };
 
             if (directoryBrowser.ShowDialog() == true)

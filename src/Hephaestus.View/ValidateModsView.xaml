@@ -45,7 +45,8 @@
                 Background="Transparent"
                 BorderBrush="{DynamicResource MaterialDesignBody}"
                 Command="{Binding ValidateDirectoryCommand}"
-                Foreground="{DynamicResource MaterialDesignBody}">
+                Foreground="{DynamicResource MaterialDesignBody}"
+                Visibility="{Binding IsValidationComplete, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 Analyze Directory
             </Button>
 
