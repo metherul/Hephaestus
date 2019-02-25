@@ -2,12 +2,14 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Autofac;
 using GalaSoft.MvvmLight.Command;
 using Hephaestus.Model.Transcompiler.Interfaces;
 using Hephaestus.ViewModel.Interfaces;
+using Ookii.Dialogs.Wpf;
 
 namespace Hephaestus.ViewModel
 {
@@ -23,8 +25,8 @@ namespace Hephaestus.ViewModel
 
         public ObservableCollection<string> MissingArchives { get; set; }
 
-        private bool IsValidationComplete { get; set; }
-        private bool IsValidating { get; set; }
+        public bool IsValidationComplete { get; set; }
+        public bool IsValidating { get; set; }
 
         public ValidateModsViewModel(IComponentContext components)
         {
@@ -83,9 +85,22 @@ namespace Hephaestus.ViewModel
             Process.Start($"https://google.com/search?q={Path.GetFileNameWithoutExtension(archiveName)}");
         }
 
-        private void ValidateDirectory()
+        private async void ValidateDirectory()
         {
+            var directoryBrowser = new VistaFolderBrowserDialog()
+            {
+                Description = "Select a folder to analyze."
+            };
 
+            if (directoryBrowser.ShowDialog() == true)
+            {
+                await Task.Factory.StartNew(() =>
+                {
+                    MissingArchives = new ObservableCollection<string>(_modListBuilder.AnalyzeDirectory(MissingArchives.ToList(), directoryBrowser.SelectedPath));
+                });
+
+                IsValidationComplete = MissingArchives.Count == 0;
+            }
         }
 
         private void IncrementView()

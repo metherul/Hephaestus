@@ -12,5 +12,7 @@ namespace Hephaestus.Model.Transcompiler.Interfaces
         bool AddMissingArchive(string archiveName, string archivePath);
 
         string GetSafeFilename(string filename);
+
+        List<string> AnalyzeDirectory(List<string> missingMods, string directoryPath);
     }
 }
