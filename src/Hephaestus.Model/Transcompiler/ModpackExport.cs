@@ -110,6 +110,8 @@ namespace Hephaestus.Model.Transcompiler
 
                 zip.Save(modpackDirectory + ".auto");
             }
+
+            Directory.Delete(modpackDirectory, true);
         }
     }
 }

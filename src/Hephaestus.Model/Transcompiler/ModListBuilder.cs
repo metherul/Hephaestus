@@ -76,6 +76,24 @@ namespace Hephaestus.Model.Transcompiler
             return missingArchives;
         }
 
+        public List<string> AnalyzeDirectory(List<string> missingMods, string directoryPath)
+        {
+            var directoryFiles = Directory.GetFiles(directoryPath, "*.*", SearchOption.TopDirectoryOnly);
+
+            foreach (var file in directoryFiles)
+            {
+                var matchingMod = missingMods.Where(x => ValidateArchiveAgainstPath(x, file)).ToList();
+
+                if (matchingMod.Any())
+                {
+                    AddMissingArchive(matchingMod.First(), file);
+                    missingMods.Remove(matchingMod.First());
+                }
+            }
+
+            return missingMods;
+        }
+
         public bool ValidateArchiveAgainstPath(string archiveName, string archivePath)
         {
             var archivePathFileName = Path.GetFileName(archivePath);

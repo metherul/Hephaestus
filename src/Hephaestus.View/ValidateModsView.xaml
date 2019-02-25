@@ -37,6 +37,17 @@
                 </Label>
             </StackPanel>
 
+            <Button
+                Grid.Row="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                materialDesign:RippleAssist.Feedback="{DynamicResource MaterialDesignBody}"
+                Background="Transparent"
+                BorderBrush="{DynamicResource MaterialDesignBody}"
+                Foreground="{DynamicResource MaterialDesignBody}">
+                Analyze Directory
+            </Button>
+
             <Border
                 Grid.Row="1"
                 Padding="2"

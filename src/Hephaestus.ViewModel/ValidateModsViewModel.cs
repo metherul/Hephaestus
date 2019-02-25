@@ -18,12 +18,13 @@ namespace Hephaestus.ViewModel
 
         public RelayCommand<string> BrowseForArchiveCommand => new RelayCommand<string>(BrowseForArchive);
         public RelayCommand<string> SearchForArchiveCommand => new RelayCommand<string>(SearchForArchive);
+        public RelayCommand ValidateDirectoryCommand => new RelayCommand(ValidateDirectory);
         public RelayCommand IncrementViewCommand => new RelayCommand(IncrementView);
 
         public ObservableCollection<string> MissingArchives { get; set; }
 
-        public bool IsValidationComplete { get; set; }
-        public bool IsValidating { get; set; }
+        private bool IsValidationComplete { get; set; }
+        private bool IsValidating { get; set; }
 
         public ValidateModsViewModel(IComponentContext components)
         {
@@ -39,7 +40,7 @@ namespace Hephaestus.ViewModel
             };
         }
 
-        public async void BeginValidation()
+        private async void BeginValidation()
         {
             await Task.Factory.StartNew(() =>
             {
@@ -49,7 +50,7 @@ namespace Hephaestus.ViewModel
             IsValidationComplete = MissingArchives.Count == 0;
         }
 
-        public void BrowseForArchive(string archiveName)
+        private void BrowseForArchive(string archiveName)
         {
             var dialog = new OpenFileDialog()
             {
@@ -77,12 +78,17 @@ namespace Hephaestus.ViewModel
             }
         }
 
-        public void SearchForArchive(string archiveName)
+        private void SearchForArchive(string archiveName)
         {
             Process.Start($"https://google.com/search?q={Path.GetFileNameWithoutExtension(archiveName)}");
         }
 
-        public void IncrementView()
+        private void ValidateDirectory()
+        {
+
+        }
+
+        private void IncrementView()
         {
             _viewIndexController.SetCurrentViewIndex(ViewIndex.Transcompiler);
         }
