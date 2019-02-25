@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Autofac;
+using Hephaestus.Model.Core.Interfaces;
 using Hephaestus.ViewModel.Interfaces;
 
 namespace Hephaestus.ViewModel
@@ -8,12 +9,14 @@ namespace Hephaestus.ViewModel
     public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
     {
         private IViewIndexController _viewIndexController;
+        private readonly ILogger _logger;
 
         public int CurrentViewIndex { get; set; }
 
         public MainWindowViewModel(IComponentContext components)
         {
             _viewIndexController = components.Resolve<IViewIndexController>();
+            _logger = components.Resolve<ILogger>();
 
             _viewIndexController.ViewIndexChanged += _viewIndexController_ViewIndexChanged;
 
@@ -24,7 +27,7 @@ namespace Hephaestus.ViewModel
 
             AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
             {
-                File.AppendAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "debug.txt"), eventArgs.Exception.Message);
+                _logger.Write(eventArgs.Exception.Message + "\n");
             };
         }
 
