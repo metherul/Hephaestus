@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Autofac;
+using Hephaestus.Model.Core.Interfaces;
 using Hephaestus.Model.Transcompiler.Interfaces;
 using IniParser;
 
@@ -11,9 +12,11 @@ namespace Hephaestus.Model.Transcompiler
     {
         private readonly ITranscompilerBase _transcompilerBase;
         private readonly IArchiveFilesystemSearch _archiveFilesystemSearch;
+        private readonly ILogger _logger;
 
         public ModListBuilder(IComponentContext components)
         {
+            _logger = components.Resolve<ILogger>();
             _transcompilerBase = components.Resolve<ITranscompilerBase>();
             _archiveFilesystemSearch = components.Resolve<IArchiveFilesystemSearch>();
         }
@@ -36,6 +39,8 @@ namespace Hephaestus.Model.Transcompiler
 
                 if (!File.Exists(modIni))
                 {
+                    _logger.Write($"meta.ini not found for modpath: {mod}\n");
+
                     continue;
                 }
 
@@ -86,6 +91,8 @@ namespace Hephaestus.Model.Transcompiler
 
                 if (matchingMod.Any())
                 {
+                    _logger.Write($"Found {matchingMod.Count} mod matches for archive path: {file}\n");
+
                     AddMissingArchive(matchingMod.First(), file);
                     missingMods.Remove(matchingMod.First());
                 }
@@ -96,6 +103,8 @@ namespace Hephaestus.Model.Transcompiler
 
         public bool ValidateArchiveAgainstPath(string archiveName, string archivePath)
         {
+            _logger.Write($"Validating {archiveName} name against {archivePath} path\n");
+
             var archivePathFileName = Path.GetFileName(archivePath);
 
             return (archiveName == archivePathFileName);
@@ -105,6 +114,7 @@ namespace Hephaestus.Model.Transcompiler
         {
             // At this point, we need to trust that the archive is correct. If not, bubble up errors in later compilation
             var matchingModObject = _transcompilerBase.IntermediaryModObjects.First(x => x.ArchivePath == archiveName);
+
             _transcompilerBase
                 .IntermediaryModObjects[_transcompilerBase.IntermediaryModObjects.IndexOf(matchingModObject)]
                 .ArchivePath = archivePath;
