@@ -118,26 +118,26 @@ namespace Hephaestus.Model.Nexus
             {
                 response = await _httpClient.GetAsync($"/v1/games/{_gameName}/mods/md5_search/{md5.ToLower()}.json");
                 RemainingDailyRequests = Convert.ToInt32(response.Headers.GetValues("X-RL-Daily-Remaining").ToList().First());
+
+                var apiJson = JArray.Parse(response.Content.ReadAsStringAsync().Result);
+
+                _logger.Write($"success.\n");
+
+                return new GetModsByMd5Result()
+                {
+                    AuthorName = apiJson[0]["mod"]["author"].ToString(),
+                    ModId = apiJson[0]["mod"]["mod_id"].ToString(),
+                    FileId = apiJson[0]["file_details"]["file_id"].ToString(),
+                    ArchiveName = apiJson[0]["file_details"]["file_name"].ToString()
+                };
             }
+
             catch (Exception e)
             {
                 _logger.Write($"Nexus API request failed: {e.InnerException} \n");
 
                 return null;
             }
-
-
-            var apiJson = JArray.Parse(response.Content.ReadAsStringAsync().Result);
-
-            _logger.Write($"success.");
-
-            return new GetModsByMd5Result()
-            {
-                AuthorName = apiJson[0]["mod"]["author"].ToString(),
-                ModId = apiJson[0]["mod"]["mod_id"].ToString(),
-                FileId = apiJson[0]["file_details"]["file_id"].ToString(),
-                ArchiveName = apiJson[0]["file_details"]["file_name"].ToString()
-            };
         }
     }
 }

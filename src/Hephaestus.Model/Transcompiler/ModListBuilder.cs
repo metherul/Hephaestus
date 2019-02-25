@@ -111,11 +111,14 @@ namespace Hephaestus.Model.Transcompiler
         public bool AddMissingArchive(string archiveName, string archivePath)
         {
             // At this point, we need to trust that the archive is correct. If not, bubble up errors in later compilation
-            var matchingModObject = _transcompilerBase.IntermediaryModObjects.First(x => x.ArchivePath == archiveName);
+            var matchingModObjects = _transcompilerBase.IntermediaryModObjects.Where(x => x.ArchivePath == archiveName);
 
-            _transcompilerBase
-                .IntermediaryModObjects[_transcompilerBase.IntermediaryModObjects.IndexOf(matchingModObject)]
-                .ArchivePath = archivePath;
+            foreach (var matchingModObject in matchingModObjects)
+            {
+                _transcompilerBase
+                    .IntermediaryModObjects[_transcompilerBase.IntermediaryModObjects.IndexOf(matchingModObject)]
+                    .ArchivePath = archivePath;
+            }
 
             return true;
         }
