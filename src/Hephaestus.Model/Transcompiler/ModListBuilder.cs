@@ -103,8 +103,6 @@ namespace Hephaestus.Model.Transcompiler
 
         public bool ValidateArchiveAgainstPath(string archiveName, string archivePath)
         {
-            _logger.Write($"Validating {archiveName} name against {archivePath} path\n");
-
             var archivePathFileName = Path.GetFileName(archivePath);
 
             return (archiveName == archivePathFileName);
