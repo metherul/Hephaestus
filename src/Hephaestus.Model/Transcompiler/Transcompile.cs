@@ -98,6 +98,11 @@ namespace Hephaestus.Model.Transcompiler
                 progressLog.Report("[INFO] Starting primary mod file analysis...");
                 foreach (var modFile in modFiles)
                 {
+                    if (Path.GetFileName(modFile) == "meta.ini")
+                    {
+                        continue;
+                    }
+
                     progressLog.Report($"[INFO] Searching for archive file match to: {Path.GetFileName(modFile)}");
 
                     var modFileInfo = new FileInfo(modFile);
