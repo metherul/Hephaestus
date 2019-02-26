@@ -16,7 +16,7 @@ namespace Hephaestus.ViewModel
         {
             _viewIndexController = components.Resolve<IViewIndexController>();
         }
-
+        //
         private void IncrementView(ViewIndex viewIndex)
         {
             _viewIndexController.SetCurrentViewIndex(viewIndex);
