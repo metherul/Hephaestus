@@ -67,6 +67,8 @@ namespace Hephaestus.Model.Transcompiler
                         modObject.ModId = md5Response.ModId;
                         modObject.FileId = md5Response.FileId;
                         modObject.TrueArchiveName = md5Response.ArchiveName;
+                        modObject.TargetGame = "Skyrim";
+                        modObject.Repository = "NexusMods";
                     }
                 }
 

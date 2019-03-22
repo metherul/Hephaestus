@@ -66,7 +66,9 @@ namespace Hephaestus.Model.Transcompiler
                     FileSize = new FileInfo(modObject.ArchivePath).Length.ToString(),
                     Md5 = modObject.Md5.ToLower(),
                     ModId = modObject.ModId,
-                    FileId = modObject.FileId
+                    FileId = modObject.FileId,
+                    TargetGame = modObject.TargetGame,
+                    Repository = modObject.Repository
                 };
 
                 var installationParameters = modObject.ArchiveModFilePairs.Select(x => new InstallParameter()

@@ -14,6 +14,9 @@ namespace Hephaestus.Model.Transcompiler
         public string ArchivePath { get; set; }
         public string TrueArchiveName { get; set; }
 
+        public string TargetGame { get; set; }
+        public string Repository { get; set; }
+
         public string Md5 { get; set; }
 
         public bool IsNexusSource { get; set; }
