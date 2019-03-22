@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Hephaestus.Model.Interfaces;
+using Hephaestus.Model.Modpack.ModpackBase;
 
 namespace Hephaestus.Model.Transcompiler.Interfaces
 {
@@ -12,5 +13,6 @@ namespace Hephaestus.Model.Transcompiler.Interfaces
         void SetModpackAuthorName(string authorName);
         void SetModpackSource(string modpackSource);
         void SetModpackVersion(string modpackVersion);
+        void EnableModOrganizerInstall(ModOrganizerVersion version);
     }
 }

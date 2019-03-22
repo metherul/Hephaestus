@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Hephaestus.Model.Interfaces;
+using Hephaestus.Model.Modpack.ModpackBase;
 
 namespace Hephaestus.Model.Transcompiler.Interfaces
 {
@@ -20,5 +21,7 @@ namespace Hephaestus.Model.Transcompiler.Interfaces
         string ModpackAuthorName { get; set; }
         string ModpackSource { get; set; }
         string ModpackVersion { get; set; }
+        bool InstallModOrganizer { get; set; }
+        ModOrganizerVersion ModOrganizerVersion { get; set; }
     }
 }

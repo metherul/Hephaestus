@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Autofac;
 using GalaSoft.MvvmLight.Command;
+using Hephaestus.Model.Modpack.ModpackBase;
 using Hephaestus.Model.Transcompiler.Interfaces;
 using Hephaestus.ViewModel.Interfaces;
 
@@ -74,6 +75,8 @@ namespace Hephaestus.ViewModel
             _transcompilerSetup.SetModpackAuthorName(ModpackAuthorName);
             _transcompilerSetup.SetModpackSource(ModpackSource);
             _transcompilerSetup.SetModpackVersion(ModpackVersion);
+
+            _transcompilerSetup.EnableModOrganizerInstall(ModOrganizerVersion.v2_1_6);
 
             _viewIndexController.SetCurrentViewIndex(ViewIndex.ValidateMods);
         }

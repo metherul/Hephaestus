@@ -78,6 +78,7 @@
     <Compile Include="Interfaces\IService.cs" />
     <Compile Include="Modpack\ModpackBase\Header.cs" />
     <Compile Include="Modpack\ModpackBase\Mod.cs" />
+    <Compile Include="Modpack\ModpackBase\ModOrganizerVersions.cs" />
     <Compile Include="Nexus\GetModsByMd5Result.cs" />
     <Compile Include="Nexus\Interfaces\INexusApi.cs" />
     <Compile Include="Nexus\NexusApi.cs" />

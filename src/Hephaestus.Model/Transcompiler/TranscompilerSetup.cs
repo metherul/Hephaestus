@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Hephaestus.Model.Modpack.ModpackBase;
 using Hephaestus.Model.Transcompiler.Interfaces;
 
 namespace Hephaestus.Model.Transcompiler
@@ -57,6 +58,12 @@ namespace Hephaestus.Model.Transcompiler
         public void SetModpackVersion(string version)
         {
             _transcompilerBase.ModpackVersion = version;
+        }
+
+        public void EnableModOrganizerInstall(ModOrganizerVersion version)
+        {
+            _transcompilerBase.InstallModOrganizer = true;
+            _transcompilerBase.ModOrganizerVersion = version;
         }
     }
 }

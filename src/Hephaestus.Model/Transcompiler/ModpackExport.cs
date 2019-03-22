@@ -31,8 +31,7 @@ namespace Hephaestus.Model.Transcompiler
                 ModInstallFolders = new List<string>(){ _transcompilerBase.ProfileName },
                 Name = (_transcompilerBase.ModpackName == "") ? "Unknown" : _transcompilerBase.ModpackName,
                 SourceUrl = (_transcompilerBase.ModpackSource),
-                TargetGame = "Skyrim",
-                Version = (_transcompilerBase.ModpackVersion == "") ? "1.0" : _transcompilerBase.ModpackVersion
+                Version = (_transcompilerBase.ModpackVersion == "") ? "1.0" : _transcompilerBase.ModpackVersion,
             };
 
             var modpackDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, modpackHeader.Name);
