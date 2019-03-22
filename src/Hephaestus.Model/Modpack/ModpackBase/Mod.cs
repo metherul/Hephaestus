@@ -32,6 +32,9 @@ namespace Hephaestus.Model.Modpack.ModpackBase
         [JsonProperty("nexus_file_id")]
         public string FileId { get; set; }
 
+        [JsonProperty("nexus_file_name")]
+        public string NexusFileName { get; set; }
+
         [JsonProperty("target_game")]
         public string TargetGame { get; set; }
 

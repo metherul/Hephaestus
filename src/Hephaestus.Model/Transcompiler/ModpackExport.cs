@@ -70,7 +70,8 @@ namespace Hephaestus.Model.Transcompiler
                     ModId = modObject.ModId,
                     FileId = modObject.FileId,
                     TargetGame = modObject.TargetGame,
-                    Repository = modObject.Repository
+                    Repository = modObject.Repository,
+                    NexusFileName = modObject.NexusFileName
                 };
 
                 var installationParameters = modObject.ArchiveModFilePairs.Select(x => new InstallParameter()

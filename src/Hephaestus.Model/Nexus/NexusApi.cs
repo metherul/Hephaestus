@@ -129,7 +129,8 @@ namespace Hephaestus.Model.Nexus
                     ModId = apiJson[0]["mod"]["mod_id"].ToString(),
                     FileId = apiJson[0]["file_details"]["file_id"].ToString(),
                     ArchiveName = apiJson[0]["file_details"]["file_name"].ToString(),
-                    Version = apiJson[0]["file_details"]["version"].ToString()
+                    Version = apiJson[0]["file_details"]["version"].ToString(),
+                    NexusFileName = apiJson[0]["file_details"]["name"].ToString()
                 };
             }
 

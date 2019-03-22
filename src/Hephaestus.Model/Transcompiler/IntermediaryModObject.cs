@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Hephaestus.Model.Transcompiler.Interfaces;
 
 namespace Hephaestus.Model.Transcompiler
 {
@@ -17,6 +16,8 @@ namespace Hephaestus.Model.Transcompiler
 
         public string TargetGame { get; set; }
         public string Repository { get; set; }
+
+        public string NexusFileName { get; set; }
 
         public string Md5 { get; set; }
 

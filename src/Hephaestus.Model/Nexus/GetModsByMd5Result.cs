@@ -7,5 +7,6 @@
         public string FileId;
         public string ArchiveName;
         public string Version;
+        public string NexusFileName;
     }
 }
