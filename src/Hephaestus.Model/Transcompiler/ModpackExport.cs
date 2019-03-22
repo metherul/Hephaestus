@@ -27,6 +27,7 @@ namespace Hephaestus.Model.Transcompiler
             // Create the modpack header
             var modpackHeader = new Header()
             {
+                ModpackVersion = "1.0b",
                 Author = (_transcompilerBase.ModpackAuthorName == "") ? "Anon" : _transcompilerBase.ModpackAuthorName,
                 ModInstallFolders = new List<string>(){ _transcompilerBase.ProfileName },
                 Name = (_transcompilerBase.ModpackName == "") ? "Unknown" : _transcompilerBase.ModpackName,
