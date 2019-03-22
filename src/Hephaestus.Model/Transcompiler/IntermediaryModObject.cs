@@ -10,6 +10,7 @@ namespace Hephaestus.Model.Transcompiler
         public string ModId { get; set; }
         public string FileId { get; set; }
         public string Author { get; set; }
+        public string Version { get; set; }
         public string ModPath { get; set; }
         public string ArchivePath { get; set; }
         public string TrueArchiveName { get; set; }

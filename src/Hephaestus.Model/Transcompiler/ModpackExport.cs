@@ -62,6 +62,7 @@ namespace Hephaestus.Model.Transcompiler
                 var mod = new Mod()
                 {
                     ModName = new DirectoryInfo(modObject.ModPath).Name,
+                    Author = modObject.Author,
                     FileName = modObject.TrueArchiveName,
                     FileSize = new FileInfo(modObject.ArchivePath).Length.ToString(),
                     Md5 = modObject.Md5.ToLower(),

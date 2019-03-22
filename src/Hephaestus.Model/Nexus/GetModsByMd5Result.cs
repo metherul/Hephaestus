@@ -6,5 +6,6 @@
         public string ModId;
         public string FileId;
         public string ArchiveName;
+        public string Version;
     }
 }
