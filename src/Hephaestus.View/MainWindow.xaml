@@ -40,6 +40,8 @@
                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
                 Background="Transparent"
                 BorderBrush="Transparent"
+                Command="{Binding CloseWindowCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MainWindow}}}"
                 Style="{DynamicResource MaterialDesignFloatingActionButton}">
                 <materialDesign:PackIcon
                     Width="20"
@@ -83,7 +85,7 @@
                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
                 Background="Transparent"
                 BorderBrush="Transparent">
-                <Label FontFamily="{DynamicResource RobotoMono}">Hephaestus v1.4.0</Label>
+                <Label FontFamily="{DynamicResource RobotoMono}">Hephaestus v1.0.0b</Label>
             </Button>
             <Button
                 Width="Auto"

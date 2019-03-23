@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Windows;
 using Autofac;
+using GalaSoft.MvvmLight.Command;
 using Hephaestus.Model.Core.Interfaces;
 using Hephaestus.ViewModel.Interfaces;
 
@@ -11,6 +13,8 @@ namespace Hephaestus.ViewModel
         private IViewIndexController _viewIndexController;
         private readonly ILogger _logger;
 
+        public RelayCommand<Window> CloseWindowCommand { get; set; }
+
         public int CurrentViewIndex { get; set; }
 
         public MainWindowViewModel(IComponentContext components)
@@ -19,6 +23,8 @@ namespace Hephaestus.ViewModel
             _logger = components.Resolve<ILogger>();
 
             _viewIndexController.ViewIndexChanged += _viewIndexController_ViewIndexChanged;
+
+            CloseWindowCommand = new RelayCommand<Window>(CloseWindow);
 
             if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "debug.txt")))
             {
@@ -34,6 +40,12 @@ namespace Hephaestus.ViewModel
         private void _viewIndexController_ViewIndexChanged(object sender, int e)
         {
             CurrentViewIndex = e;
+        }
+
+
+        private static void CloseWindow(Window window)
+        {
+            window.Close();
         }
     }
 }
