@@ -82,8 +82,10 @@
     <Compile Include="Nexus\GetModsByMd5Result.cs" />
     <Compile Include="Nexus\Interfaces\INexusApi.cs" />
     <Compile Include="Nexus\NexusApi.cs" />
+    <Compile Include="ToDerived.cs" />
     <Compile Include="Transcompiler\ArchiveFilesystemSearch.cs" />
     <Compile Include="Transcompiler\ArchiveModFilePair.cs" />
+    <Compile Include="Transcompiler\ExtendedMod.cs" />
     <Compile Include="Transcompiler\Interfaces\IModpackExport.cs" />
     <Compile Include="Transcompiler\Interfaces\IArchiveFilesystemSearch.cs" />
     <Compile Include="Transcompiler\Interfaces\IModListBuilder.cs" />

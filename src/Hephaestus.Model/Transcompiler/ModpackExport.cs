@@ -101,7 +101,6 @@ namespace Hephaestus.Model.Transcompiler
             File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "loadorder.txt"), Path.Combine(modpackDirectory, "loadorder.txt"));
             File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "modlist.txt"), Path.Combine(modpackDirectory, "modlist.txt"));
             File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "archives.txt"), Path.Combine(modpackDirectory, "archives.txt"));
-            File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "lockedorder.txt"), Path.Combine(modpackDirectory, "lockedorder.txt"));
 
             if (File.Exists(modpackDirectory + ".auto"))
             {

@@ -120,17 +120,31 @@ namespace Hephaestus.Model.Nexus
                 RemainingDailyRequests = Convert.ToInt32(response.Headers.GetValues("X-RL-Daily-Remaining").ToList().First());
 
                 var apiJson = JArray.Parse(response.Content.ReadAsStringAsync().Result);
+                var possibleJsonObjects = apiJson.Where(x => (bool)x["mod"]["available"] == true).ToList(); // Filter out all unavaliable mods
+
+                if (possibleJsonObjects.Count() > 1)
+                {
+                    // We need to step through more advanced algorithms
+                    _logger.Write("More than one possible json object AFTER filter. REPORT TO THAT IDIOT METHERUL");
+                    return null;
+                }
+
+                if (!possibleJsonObjects.Any())
+                {
+                    _logger.Write($"No valid json objects for md5: {md5}. Report this to the modpack author, this mod needs to be updated/removed");
+                    return null;
+                }
 
                 _logger.Write($"success.\n");
 
                 return new GetModsByMd5Result()
                 {
-                    AuthorName = apiJson[0]["mod"]["author"].ToString(),
-                    ModId = apiJson[0]["mod"]["mod_id"].ToString(),
-                    FileId = apiJson[0]["file_details"]["file_id"].ToString(),
-                    ArchiveName = apiJson[0]["file_details"]["file_name"].ToString(),
-                    Version = apiJson[0]["file_details"]["version"].ToString(),
-                    NexusFileName = apiJson[0]["file_details"]["name"].ToString()
+                    AuthorName = possibleJsonObjects[0]["mod"]["author"].ToString(),
+                    ModId = possibleJsonObjects[0]["mod"]["mod_id"].ToString(),
+                    FileId = possibleJsonObjects[0]["file_details"]["file_id"].ToString(),
+                    ArchiveName = possibleJsonObjects[0]["file_details"]["file_name"].ToString(),
+                    Version = possibleJsonObjects[0]["file_details"]["version"].ToString(),
+                    NexusFileName = possibleJsonObjects[0]["file_details"]["name"].ToString()
                 };
             }
 
@@ -140,6 +154,51 @@ namespace Hephaestus.Model.Nexus
 
                 return null;
             }
+        }
+
+        private int ComputeLevenshtein(string s, string t)
+        {
+            int n = s.Length;
+            int m = t.Length;
+            int[,] d = new int[n + 1, m + 1];
+
+            // Step 1
+            if (n == 0)
+            {
+                return m;
+            }
+
+            if (m == 0)
+            {
+                return n;
+            }
+
+            // Step 2
+            for (int i = 0; i <= n; d[i, 0] = i++)
+            {
+            }
+
+            for (int j = 0; j <= m; d[0, j] = j++)
+            {
+            }
+
+            // Step 3
+            for (int i = 1; i <= n; i++)
+            {
+                //Step 4
+                for (int j = 1; j <= m; j++)
+                {
+                    // Step 5
+                    int cost = (t[j - 1] == s[i - 1]) ? 0 : 1;
+
+                    // Step 6
+                    d[i, j] = Math.Min(
+                        Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
+                        d[i - 1, j - 1] + cost);
+                }
+            }
+            // Step 7
+            return d[n, m];
         }
     }
 }
