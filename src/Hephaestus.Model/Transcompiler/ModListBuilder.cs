@@ -49,8 +49,7 @@ namespace Hephaestus.Model.Transcompiler
 
                 var intermediaryModObject = new IntermediaryModObject()
                 {
-                    ModPath = mod,
-                    IsNexusSource = iniData["General"]["repository"].ToLower() == "nexus"
+                    ModPath = mod
                 };
 
                 var archivePath = GetSafeFilename(iniData["General"]["installationFile"]);

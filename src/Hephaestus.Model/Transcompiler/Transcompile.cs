@@ -50,28 +50,26 @@ namespace Hephaestus.Model.Transcompiler
 
                 // Get ModId and FileId data
                 progressLog.Report($"[INFO] Attempting Nexus API request ({_nexusApi.RemainingDailyRequests} daily requests remaining)...");
-                if (modObject.IsNexusSource)
+
+                var md5Response = await _nexusApi.GetModsByMd5(modObject.Md5);
+
+                if (md5Response == null)
                 {
-                    var md5Response = await _nexusApi.GetModsByMd5(modObject.Md5);
+                    progressLog.Report("[WARN] API request failed. This is generally not an issue.");
+                    modObject.TrueArchiveName = Path.GetFileName(modObject.ArchivePath);
+                }
 
-                    if (md5Response == null)
-                    {
-                        progressLog.Report("[WARN] API request failed. This is generally not an issue.");
-                        modObject.TrueArchiveName = Path.GetFileName(modObject.ArchivePath);
-                    }
-
-                    else
-                    {
-                        progressLog.Report("[DONE]");
-                        modObject.Author = md5Response.AuthorName;
-                        modObject.ModId = md5Response.ModId;
-                        modObject.FileId = md5Response.FileId;
-                        modObject.TrueArchiveName = md5Response.ArchiveName;
-                        modObject.Version = md5Response.Version;
-                        modObject.TargetGame = "Skyrim";
-                        modObject.Repository = "NexusMods";
-                        modObject.NexusFileName = md5Response.NexusFileName;
-                    }
+                else
+                {
+                    progressLog.Report("[DONE]");
+                    modObject.Author = md5Response.AuthorName;
+                    modObject.ModId = md5Response.ModId;
+                    modObject.FileId = md5Response.FileId;
+                    modObject.TrueArchiveName = md5Response.ArchiveName;
+                    modObject.Version = md5Response.Version;
+                    modObject.TargetGame = "Skyrim";
+                    modObject.Repository = "NexusMods";
+                    modObject.NexusFileName = md5Response.NexusFileName;
                 }
 
                 // Done with data prep.
