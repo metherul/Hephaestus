@@ -33,6 +33,8 @@ namespace Hephaestus.Model.Transcompiler
                 Name = (_transcompilerBase.ModpackName == "") ? "Unknown" : _transcompilerBase.ModpackName,
                 SourceUrl = (_transcompilerBase.ModpackSource),
                 Version = (_transcompilerBase.ModpackVersion == "") ? "1.0" : _transcompilerBase.ModpackVersion,
+                InstallModOrganizer = true,
+                ModOrganizerVersion = ModOrganizerVersion.v2_1_6
             };
 
             var modpackDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, modpackHeader.Name);
@@ -96,7 +98,10 @@ namespace Hephaestus.Model.Transcompiler
 
             // Move plugin and modlist information from MO2
             File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "plugins.txt"), Path.Combine(modpackDirectory, "plugins.txt"));
+            File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "loadorder.txt"), Path.Combine(modpackDirectory, "loadorder.txt"));
             File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "modlist.txt"), Path.Combine(modpackDirectory, "modlist.txt"));
+            File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "archives.txt"), Path.Combine(modpackDirectory, "archives.txt"));
+            File.Copy(Path.Combine(_transcompilerBase.ChosenProfilePath, "lockedorder.txt"), Path.Combine(modpackDirectory, "lockedorder.txt"));
 
             if (File.Exists(modpackDirectory + ".auto"))
             {
