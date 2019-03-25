@@ -51,7 +51,7 @@ namespace Hephaestus.Model.Transcompiler
                 // Get ModId and FileId data
                 progressLog.Report($"[INFO] Attempting Nexus API request ({_nexusApi.RemainingDailyRequests} daily requests remaining)...");
 
-                var md5Response = await _nexusApi.GetModsByMd5(modObject.Md5);
+                var md5Response = await _nexusApi.GetModsByMd5(modObject);
 
                 if (md5Response == null)
                 {

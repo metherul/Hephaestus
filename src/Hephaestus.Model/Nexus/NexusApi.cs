@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -10,6 +11,7 @@ using Autofac;
 using Hephaestus.Model.Core;
 using Hephaestus.Model.Core.Interfaces;
 using Hephaestus.Model.Nexus.Interfaces;
+using Hephaestus.Model.Transcompiler;
 using Newtonsoft.Json.Linq;
 using WebSocket = WebSocketSharp.WebSocket;
 
@@ -108,11 +110,12 @@ namespace Hephaestus.Model.Nexus
             return _apiKey;
         }
 
-        public async Task<GetModsByMd5Result> GetModsByMd5(string md5)
+        public async Task<GetModsByMd5Result> GetModsByMd5(IntermediaryModObject mod)
         {
-            _logger.Write($"MD5 Query: {md5} \n");
-
+            var md5 = mod.Md5;
             var response = new HttpResponseMessage();
+
+            _logger.Write($"MD5 Query: {md5} \n");
 
             try
             {
@@ -120,31 +123,34 @@ namespace Hephaestus.Model.Nexus
                 RemainingDailyRequests = Convert.ToInt32(response.Headers.GetValues("X-RL-Daily-Remaining").ToList().First());
 
                 var apiJson = JArray.Parse(response.Content.ReadAsStringAsync().Result);
-                var possibleJsonObjects = apiJson.Where(x => (bool)x["mod"]["available"] == true).ToList(); // Filter out all unavaliable mods
+                var possibleJsonObjects = apiJson.Where(x => (bool)x["mod"]["available"] == true).Where(x => (int)x["file_details"]["category_id"] != 6);
+                var jsonObject = possibleJsonObjects.First();
 
                 if (possibleJsonObjects.Count() > 1)
                 {
                     // We need to step through more advanced algorithms
-                    _logger.Write("More than one possible json object AFTER filter. REPORT TO THAT IDIOT METHERUL");
-                    return null;
+                    _logger.Write("More than one possible json object AFTER filter. Attempting to fix ComputeLevenshtein()");
+
+                    jsonObject = possibleJsonObjects.Where(x => x["file_details"]["file_name"].ToString() == mod.TrueArchiveName).First();
                 }
 
                 if (!possibleJsonObjects.Any())
                 {
                     _logger.Write($"No valid json objects for md5: {md5}. Report this to the modpack author, this mod needs to be updated/removed");
+
                     return null;
-                }
+                }   
 
                 _logger.Write($"success.\n");
 
                 return new GetModsByMd5Result()
                 {
-                    AuthorName = possibleJsonObjects[0]["mod"]["author"].ToString(),
-                    ModId = possibleJsonObjects[0]["mod"]["mod_id"].ToString(),
-                    FileId = possibleJsonObjects[0]["file_details"]["file_id"].ToString(),
-                    ArchiveName = possibleJsonObjects[0]["file_details"]["file_name"].ToString(),
-                    Version = possibleJsonObjects[0]["file_details"]["version"].ToString(),
-                    NexusFileName = possibleJsonObjects[0]["file_details"]["name"].ToString()
+                    AuthorName = jsonObject["mod"]["author"].ToString(),
+                    ModId = jsonObject["mod"]["mod_id"].ToString(),
+                    FileId = jsonObject["file_details"]["file_id"].ToString(),
+                    ArchiveName = jsonObject["file_details"]["file_name"].ToString(),
+                    Version = jsonObject["file_details"]["version"].ToString(),
+                    NexusFileName = jsonObject["file_details"]["name"].ToString()
                 };
             }
 

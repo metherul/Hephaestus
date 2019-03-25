@@ -85,7 +85,7 @@
                 materialDesign:ShadowAssist.ShadowDepth="Depth0"
                 Background="Transparent"
                 BorderBrush="Transparent">
-                <Label FontFamily="{DynamicResource RobotoMono}">Hephaestus v1.0.1b</Label>
+                <Label FontFamily="{DynamicResource RobotoMono}">Hephaestus v1.0.3b</Label>
             </Button>
             <Button
                 Width="Auto"

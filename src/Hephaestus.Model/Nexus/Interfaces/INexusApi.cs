@@ -2,6 +2,7 @@
 using Hephaestus.Model.Core;
 using Hephaestus.Model.Core.Interfaces;
 using Hephaestus.Model.Interfaces;
+using Hephaestus.Model.Transcompiler;
 
 namespace Hephaestus.Model.Nexus.Interfaces
 {
@@ -11,7 +12,7 @@ namespace Hephaestus.Model.Nexus.Interfaces
 
         string ApiKey();
         int RemainingDailyRequests { get; set; }
-        Task<GetModsByMd5Result> GetModsByMd5(string md5);
+        Task<GetModsByMd5Result> GetModsByMd5(IntermediaryModObject mod);
         Task New(GameName gameName, string apiKey = "");
     }
 }
