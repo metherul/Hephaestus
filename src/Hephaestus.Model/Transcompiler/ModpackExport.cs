@@ -62,6 +62,7 @@ namespace Hephaestus.Model.Transcompiler
 
             foreach (var modObject in intermediaryModObjects)
             {
+                if (modObject.ArchivePath == null) continue;
                 var mod = new Mod()
                 {
                     ModName = new DirectoryInfo(modObject.ModPath).Name,

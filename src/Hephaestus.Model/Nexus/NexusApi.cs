@@ -119,10 +119,12 @@ namespace Hephaestus.Model.Nexus
 
             try
             {
-                response = await _httpClient.GetAsync($"/v1/games/{_gameName}/mods/md5_search/{md5.ToLower()}.json");
+                var game = ConvertGameName(mod.TargetGame != null ? mod.TargetGame : _gameName);
+                response = await _httpClient.GetAsync($"/v1/games/{game}/mods/md5_search/{md5.ToLower()}.json");
                 RemainingDailyRequests = Convert.ToInt32(response.Headers.GetValues("X-RL-Daily-Remaining").ToList().First());
 
-                var apiJson = JArray.Parse(response.Content.ReadAsStringAsync().Result);
+                var result = response.Content.ReadAsStringAsync().Result;
+                var apiJson = JArray.Parse(result);
                 var possibleJsonObjects = apiJson.Where(x => (bool)x["mod"]["available"] == true).Where(x => (int)x["file_details"]["category_id"] != 6);
                 var jsonObject = possibleJsonObjects.First();
 
@@ -152,6 +154,12 @@ namespace Hephaestus.Model.Nexus
 
                 return null;
             }
+        }
+
+        private object ConvertGameName(string v)
+        {
+            if (v == "SkyrimSE") return "SkyrimSpecialEdition";
+            return v;
         }
 
         private int ComputeLevenshtein(string s, string t)

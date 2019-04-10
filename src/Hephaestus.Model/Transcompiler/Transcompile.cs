@@ -12,7 +12,7 @@ using SevenZipExtractor;
 
 namespace Hephaestus.Model.Transcompiler
 {
-    public class Transcompile : ITranscompile
+    public class Transcompile
     {
         private readonly ITranscompilerBase _transcompilerBase;
         private readonly IMd5 _md5;
@@ -32,6 +32,7 @@ namespace Hephaestus.Model.Transcompiler
         public async Task Start(IProgress<string> progressLog)
         {
             var intermediaryModObjects = _transcompilerBase.IntermediaryModObjects;
+           
 
             // Begin the transcompilation process.
             // At this point we can assume that all mods have been validated and require valid meta information.
