@@ -97,7 +97,6 @@
     <Compile Include="Transcompiler\ModListBuilder.cs" />
     <Compile Include="Transcompiler\ModpackExport.cs" />
     <Compile Include="Transcompiler\Transcompile.cs" />
-    <Compile Include="Transcompiler\Transcompiler2.cs" />
     <Compile Include="Transcompiler\TranscompilerSetup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transcompiler\TranscompilerBase.cs" />
