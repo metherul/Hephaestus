@@ -62,7 +62,7 @@ namespace Hephaestus.Model.Transcompiler
         {
             var mod_name = Path.GetFileName(mod.ModPath);
             Update(progressLog, "[MOD] Compiling", mod_name);
-            var matching_archive = download_metadata.Where(md => md.DiskName == Path.GetFileName(mod.ArchivePath)).FirstOrDefault();
+            var matching_archive = download_metadata.Where(md => md.DiskName.Trim() == Path.GetFileName(mod.ArchivePath).Trim()).FirstOrDefault();
             if (matching_archive == null)
             {
                 Update(progressLog, "[MOD] No match for", mod_name);
@@ -78,9 +78,11 @@ namespace Hephaestus.Model.Transcompiler
             mod.NexusFileName = matching_archive.NexusFileName;
             mod.TrueArchiveName = matching_archive.DiskName;
             mod.Version = matching_archive.Version;
+            mod.Size = matching_archive.FileSize;
+            mod.Repository = matching_archive.Repository;
 
             var indexed = matching_archive.Contents.GroupBy(k => k.SHA256).ToDictionary(k => k.Key);
-            mod.ArchiveModFilePairs = new List<ArchiveModFilePair>();
+            var archive_pairs = new ConcurrentStack<ArchiveModFilePair>();
 
             Parallel.ForEach(Directory.EnumerateFiles(mod.ModPath, "*", SearchOption.AllDirectories),
                 file =>
@@ -94,7 +96,7 @@ namespace Hephaestus.Model.Transcompiler
                 {
                     //if (matches.Count() > 0)
                     //Update(progressLog, "[MOD] WARNING: multiple matches found for", shortened_name);
-                    mod.ArchiveModFilePairs.Add(new ArchiveModFilePair("\\" + matches.First().FileName, shortened_name));
+                    archive_pairs.Push(new ArchiveModFilePair("\\" + matches.First().FileName, shortened_name));
                 }
                 else
                 {
@@ -102,6 +104,8 @@ namespace Hephaestus.Model.Transcompiler
                 }
 
             });
+
+            mod.ArchiveModFilePairs = archive_pairs.ToList();
 
         }
 
@@ -117,7 +121,14 @@ namespace Hephaestus.Model.Transcompiler
 
         private async Task<IEnumerable<ArchiveContents>> GetDownloadMetadata(IProgress<string> progress)
         {
-            var tasks = Directory.EnumerateFiles(_transcompilerBase.DownloadsDirectoryPath, "*.*").AsParallel()
+            var ini_files = Directory.EnumerateFiles(_transcompilerBase.MODirectory, "meta.ini", SearchOption.AllDirectories)
+                                    .AsParallel()
+                                    .Select(f => (new FileIniDataParser()).ReadFile(f))
+                                    .ToList();
+
+            var archives = Directory.EnumerateFiles(_transcompilerBase.DownloadsDirectoryPath, "*.*");
+
+            var tasks = archives.AsParallel()
                 .Select(async archive => {
                     if (!SUPPORTED_ARCHIVES.Contains(Path.GetExtension(archive).ToLower())) return;
                     var meta_data_path = Path.Combine(_transcompilerBase.DownloadsDirectoryPath, archive) + METADATA_EXTENSION;
@@ -170,11 +181,12 @@ namespace Hephaestus.Model.Transcompiler
                             ac.Contents = contents.ToArray();
 
                         var meta_path = archive + ".meta";
+                        bool found_ini = false;
                         if (File.Exists(meta_path))
                         {
                             var meta_ini = (new FileIniDataParser()).ReadFile(meta_path);
                             var general = meta_ini["General"];
-
+                            
                             ac.NexusModId = general["modID"];
                             ac.NexusFileId = general["fileID"];
                             ac.TargetGame = general["gameName"];
@@ -182,6 +194,20 @@ namespace Hephaestus.Model.Transcompiler
                             ac.Version = general["version"];
                             ac.Repository = general["repository"];
                         }
+                        
+                        if (found_ini == false)
+                        {
+                            var archive_file_name = Path.GetFileName(archive);
+                            var match = ini_files.Where(d => Path.GetFileName(d.GetIn("General", "installationFile")) == archive_file_name)
+                                                 .FirstOrDefault();
+                            if (match != null)
+                            {
+                                var general = match["General"];
+                                ac.TargetGame = general["gameName"];
+                                ac.Repository = general["repository"];
+                            }
+                        }
+
 
                         var result = await _nexusApi.GetModsByMd5(new IntermediaryModObject
                         {
@@ -190,15 +216,15 @@ namespace Hephaestus.Model.Transcompiler
                             TargetGame = ac.TargetGame
                         });
 
-                        if (result == null)
-                            return;
-
-                        ac.Author = result.AuthorName;
-                        ac.NexusModId = result.ModId;
-                        ac.NexusFileName = result.NexusFileName;
-                        ac.NexusFileId = result.FileId;
-                        ac.Version = result.Version;
-                        ac.FileSize = (new FileInfo(archive)).Length.ToString();
+                        if (result != null)
+                        {
+                            ac.Author = result.AuthorName;
+                            ac.NexusModId = result.ModId;
+                            ac.NexusFileName = result.NexusFileName;
+                            ac.NexusFileId = result.FileId;
+                            ac.Version = result.Version;
+                            ac.FileSize = (new FileInfo(archive)).Length.ToString();
+                        }
 
                         await WriteJSON(meta_data_path, ac);
                         Update(progress, "[META] Finished", Path.GetFileName(archive));
