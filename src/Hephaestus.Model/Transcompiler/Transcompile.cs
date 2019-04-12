@@ -55,7 +55,9 @@ namespace Hephaestus.Model.Transcompiler
 
                 if (md5Response == null)
                 {
-                    progressLog.Report("[WARN] API request failed. This is generally not an issue.");
+                    progressLog.Report("[WARN] API request failed. Adding to post-transcompilation validation.");
+
+                    modObject.Inconsistencies.Add(Inconsistency.InvalidNexusApiCall);
                     modObject.TrueArchiveName = Path.GetFileName(modObject.ArchivePath);
                 }
 
@@ -149,6 +151,14 @@ namespace Hephaestus.Model.Transcompiler
                     {
                         progressLog.Report($"[WARN] {Path.GetFileName(modFile)} has no valid match.");
                         progressLog.Report("[DONE]");
+
+                        if (!modObject.Inconsistencies.Contains(Inconsistency.InvalidPair))
+                        {
+                            modObject.Inconsistencies.Add(Inconsistency.InvalidPair);
+                        }
+
+                        modObject.InvalidModPairCount++;
+
                         _logger.Write($"{modFile} had no valid match. \n");
                     }
                 }

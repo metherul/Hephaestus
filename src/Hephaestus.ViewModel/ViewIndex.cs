@@ -6,6 +6,7 @@
         MainPage,
         SetupModpack,
         ValidateMods,
-        Transcompiler
+        Transcompiler,
+        PostTranscompilation
     }
 }

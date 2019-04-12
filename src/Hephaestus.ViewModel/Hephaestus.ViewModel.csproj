@@ -86,7 +86,9 @@
     <Compile Include="Interfaces\IViewIndexController.cs" />
     <Compile Include="Interfaces\ITranscompilerViewModel.cs" />
     <Compile Include="Interfaces\IValidateModsViewModel.cs" />
+    <Compile Include="Interfaces\IPostTranscompilationViewModel.cs" />
     <Compile Include="NexusLoginViewModel.cs" />
+    <Compile Include="PostTranscompilationViewModel.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

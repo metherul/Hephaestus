@@ -86,6 +86,7 @@
     <Compile Include="Transcompiler\ArchiveFilesystemSearch.cs" />
     <Compile Include="Transcompiler\ArchiveModFilePair.cs" />
     <Compile Include="Transcompiler\ExtendedMod.cs" />
+    <Compile Include="Transcompiler\Inconsistency.cs" />
     <Compile Include="Transcompiler\Interfaces\IModpackExport.cs" />
     <Compile Include="Transcompiler\Interfaces\IArchiveFilesystemSearch.cs" />
     <Compile Include="Transcompiler\Interfaces\IModListBuilder.cs" />

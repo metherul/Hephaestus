@@ -17,6 +17,7 @@ namespace Hephaestus.ViewModel
         public IViewModel SetupModpackViewModel => Resolve<ISetupModpackViewModel>();
         public IViewModel ValidateModsViewModel => Resolve<IValidateModsViewModel>();
         public IViewModel TranscompilerViewModel => Resolve<ITranscompilerViewModel>();
+        public IViewModel PostTranscompilerViewModel => Resolve<IPostTranscompilationViewModel>();
 
         public Bootstrapper()
         {

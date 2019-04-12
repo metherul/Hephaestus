@@ -129,17 +129,9 @@ namespace Hephaestus.Model.Nexus
                 if (possibleJsonObjects.Count() > 1)
                 {
                     // We need to step through more advanced algorithms
-                    _logger.Write("More than one possible json object AFTER filter. Attempting to fix ComputeLevenshtein()");
-
-                    jsonObject = possibleJsonObjects.Where(x => x["file_details"]["file_name"].ToString() == mod.TrueArchiveName).First();
-                }
-
-                if (!possibleJsonObjects.Any())
-                {
-                    _logger.Write($"No valid json objects for md5: {md5}. Report this to the modpack author, this mod needs to be updated/removed");
-
+                    _logger.Write("More than one possible json object AFTER filter. Marking for later validation.");
                     return null;
-                }   
+                }  
 
                 _logger.Write($"success.\n");
 

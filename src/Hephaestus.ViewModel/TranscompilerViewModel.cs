@@ -31,7 +31,7 @@ namespace Hephaestus.ViewModel
             };
         }
 
-        public void BeginTranscompile()
+        public async void BeginTranscompile()
         {
             var progressLog = new Progress<string>();
 
@@ -48,7 +48,7 @@ namespace Hephaestus.ViewModel
                 }
             };
 
-            Task.Factory.StartNew(() =>
+            await Task.Factory.StartNew(() =>
             {
                 _transcompile.Start(progressLog);
             });

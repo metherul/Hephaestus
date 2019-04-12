@@ -22,5 +22,9 @@ namespace Hephaestus.Model.Transcompiler
         public string Md5 { get; set; }
 
         public bool IsNexusSource { get; set; }
+
+        public List<Inconsistency> Inconsistencies { get; set; }
+        
+        public int InvalidModPairCount { get; set; }
     }
 }
