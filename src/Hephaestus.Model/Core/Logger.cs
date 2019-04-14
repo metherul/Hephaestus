@@ -9,7 +9,9 @@ namespace Hephaestus.Model.Core
     {
         public void Write(string message, [CallerMemberName] string callerName = "")
         {
-            File.AppendAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "debug.txt"), $"[{callerName}] {message}");
+            lock (this){
+                File.AppendAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "debug2.txt"), $"[{callerName}] {message}");
+            }
         }
     }
 }

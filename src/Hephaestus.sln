@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hephaestus.ViewModel", "Hep
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hephaestus.Model", "Hephaestus.Model\Hephaestus.Model.csproj", "{207A8258-D9BE-4855-8305-AE98FA98BB1A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenZipExtractor", "SevenZipExtractor\SevenZipExtractor.csproj", "{8AA97F58-5044-4BBA-B8D9-A74B6947A660}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{207A8258-D9BE-4855-8305-AE98FA98BB1A}.Release|x64.Build.0 = Release|Any CPU
 		{207A8258-D9BE-4855-8305-AE98FA98BB1A}.Release|x86.ActiveCfg = Release|Any CPU
 		{207A8258-D9BE-4855-8305-AE98FA98BB1A}.Release|x86.Build.0 = Release|Any CPU
+		{8AA97F58-5044-4BBA-B8D9-A74B6947A660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AA97F58-5044-4BBA-B8D9-A74B6947A660}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AA97F58-5044-4BBA-B8D9-A74B6947A660}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8AA97F58-5044-4BBA-B8D9-A74B6947A660}.Debug|x64.Build.0 = Debug|Any CPU
+		{8AA97F58-5044-4BBA-B8D9-A74B6947A660}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8AA97F58-5044-4BBA-B8D9-A74B6947A660}.Debug|x86.Build.0 = Debug|Any CPU
+		{8AA97F58-5044-4BBA-B8D9-A74B6947A660}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AA97F58-5044-4BBA-B8D9-A74B6947A660}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AA97F58-5044-4BBA-B8D9-A74B6947A660}.Release|x64.ActiveCfg = Release|Any CPU
+		{8AA97F58-5044-4BBA-B8D9-A74B6947A660}.Release|x64.Build.0 = Release|Any CPU
+		{8AA97F58-5044-4BBA-B8D9-A74B6947A660}.Release|x86.ActiveCfg = Release|Any CPU
+		{8AA97F58-5044-4BBA-B8D9-A74B6947A660}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

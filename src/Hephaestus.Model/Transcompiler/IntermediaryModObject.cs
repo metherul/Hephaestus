@@ -12,6 +12,7 @@ namespace Hephaestus.Model.Transcompiler
         public string Version { get; set; }
         public string ModPath { get; set; }
         public string ArchivePath { get; set; }
+        public string Size { get; set; }
         public string TrueArchiveName { get; set; }
 
         public string TargetGame { get; set; }

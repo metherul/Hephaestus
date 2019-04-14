@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using Autofac;
 using GalaSoft.MvvmLight.Command;
@@ -35,6 +36,13 @@ namespace Hephaestus.ViewModel
             {
                 _logger.Write(eventArgs.Exception.Message + "\n");
             };
+
+            TaskScheduler.UnobservedTaskException += (sender, eventArgs) =>
+            {
+                _logger.Write(eventArgs.Exception.Message + "\n");
+            };
+
+
         }
 
         private void _viewIndexController_ViewIndexChanged(object sender, int e)

@@ -62,12 +62,13 @@ namespace Hephaestus.Model.Transcompiler
 
             foreach (var modObject in intermediaryModObjects)
             {
+                if (modObject.ArchivePath == null) continue;
                 var mod = new Mod()
                 {
                     ModName = new DirectoryInfo(modObject.ModPath).Name,
                     Author = modObject.Author,
                     FileName = modObject.TrueArchiveName,
-                    FileSize = new FileInfo(modObject.ArchivePath).Length.ToString(),
+                    FileSize = modObject.Size,
                     Md5 = modObject.Md5.ToLower(),
                     ModId = modObject.ModId,
                     FileId = modObject.FileId,

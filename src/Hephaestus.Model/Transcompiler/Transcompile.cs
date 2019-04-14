@@ -1,14 +1,19 @@
-﻿using System;
+﻿using Autofac;
+using Hephaestus.Model.Core.Interfaces;
+using Hephaestus.Model.Nexus.Interfaces;
+using Hephaestus.Model.Transcompiler.Interfaces;
+using IniParser;
+using Newtonsoft.Json;
+using SevenZipExtractor;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
-using Autofac;
-using Hephaestus.Model.Core.Interfaces;
-using Hephaestus.Model.Nexus.Interfaces;
-using Hephaestus.Model.Transcompiler.Interfaces;
-using SevenZipExtractor;
 
 namespace Hephaestus.Model.Transcompiler
 {
@@ -23,7 +28,6 @@ namespace Hephaestus.Model.Transcompiler
         public Transcompile(IComponentContext components)
         {
             _transcompilerBase = components.Resolve<ITranscompilerBase>();
-            _md5 = components.Resolve<IMd5>();
             _nexusApi = components.Resolve<INexusApi>();
             _modpackExport = components.Resolve<IModpackExport>();
             _logger = components.Resolve<ILogger>();
@@ -31,197 +35,236 @@ namespace Hephaestus.Model.Transcompiler
 
         public async Task Start(IProgress<string> progressLog)
         {
-            var intermediaryModObjects = _transcompilerBase.IntermediaryModObjects;
+            var stopwatch = new Stopwatch();
+            var download_metadata = await GetDownloadMetadata(progressLog);
+            Update(progressLog, "[META] Retrieved metadata for", download_metadata.Count(), "archives");
+            stopwatch.Start();
 
-            // Begin the transcompilation process.
-            // At this point we can assume that all mods have been validated and require valid meta information.
-
-            foreach (var modObject in intermediaryModObjects)
+            Parallel.ForEach(_transcompilerBase.IntermediaryModObjects,
+             mod =>
             {
-                progressLog.Report($"[####] {new DirectoryInfo(modObject.ModPath).Name}");
-                progressLog.Report($"[INFO] Archive: {new FileInfo(modObject.ArchivePath).Name}");
-
-                _logger.Write($"{modObject.ArchivePath} \n");
-
-                // Calculate an Md5 hash
-                progressLog.Report("[INFO] Calculating MD5...");
-                modObject.Md5 = _md5.Create(modObject.ArchivePath);
-                progressLog.Report("[DONE]");
-
-                // Get ModId and FileId data
-                progressLog.Report($"[INFO] Attempting Nexus API request ({_nexusApi.RemainingDailyRequests} daily requests remaining)...");
-
-                var md5Response = await _nexusApi.GetModsByMd5(modObject);
-
-                if (md5Response == null)
-                {
-                    progressLog.Report("[WARN] API request failed. Adding to post-transcompilation validation.");
-
-                    modObject.Inconsistencies.Add(Inconsistency.InvalidNexusApiCall);
-                    modObject.TrueArchiveName = Path.GetFileName(modObject.ArchivePath);
-                }
-
-                else
-                {
-                    progressLog.Report("[DONE]");
-                    modObject.Author = md5Response.AuthorName;
-                    modObject.ModId = md5Response.ModId;
-                    modObject.FileId = md5Response.FileId;
-                    modObject.TrueArchiveName = md5Response.ArchiveName;
-                    modObject.Version = md5Response.Version;
-                    modObject.TargetGame = "Skyrim";
-                    modObject.Repository = "NexusMods";
-                    modObject.NexusFileName = md5Response.NexusFileName;
-                }
-
-                // Done with data prep.
-                // Begin matching pairs of files together (archive, mod).
-
-                progressLog.Report("[INFO] Starting analysis...");
-
-                var archive = new ArchiveFile(modObject.ArchivePath);
-                var archiveExtractionPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "extract");
-
-                if (Directory.Exists(archiveExtractionPath))
-                {
-                    Directory.Delete(archiveExtractionPath, true);
-                }
-
-                progressLog.Report($"[INFO] Extracting: {Path.GetFileName(modObject.ArchivePath)}. This may take some time...");
-                archive.Extract(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "extract"));
-                progressLog.Report("[DONE] ");
-
-                progressLog.Report("[INFO] Indexing mod and archive files...");
-                var archiveFiles = Directory.GetFiles(archiveExtractionPath, "*.*", SearchOption.AllDirectories).Select(x => new FileInfo(x)).ToList();
-                var modFiles = Directory.GetFiles(modObject.ModPath, "*.*", SearchOption.AllDirectories);
-                progressLog.Report("[DONE]");
-
-                // Search for archive and mod file pairs
-                var archiveModPairs = new List<ArchiveModFilePair>();
-
-                progressLog.Report("[INFO] Starting primary mod file analysis...");
-                foreach (var modFile in modFiles)
-                {
-                    if (Path.GetFileName(modFile) == "meta.ini")
-                    {
-                        continue;
-                    }
-
-                    progressLog.Report($"[INFO] Searching for archive file match to: {Path.GetFileName(modFile)}");
-
-                    var modFileInfo = new FileInfo(modFile);
-                    var archiveModPair = new ArchiveModFilePair(modObject.ArchivePath, modObject.ModPath);
-
-                    // Attempt to find a match by file length
-                    var possibleArchiveMatches = archiveFiles.Where(x => x.Length == modFileInfo.Length).ToList();
-
-                    if (possibleArchiveMatches.Any() && possibleArchiveMatches.Count() == 1)
-                    {
-                        progressLog.Report($"[DONE] Match found: {possibleArchiveMatches.First().Name}");
-
-                        archiveModPairs.Add(archiveModPair.New(possibleArchiveMatches.First().FullName, modFileInfo.FullName));
-                        continue;
-                    }
-
-                    progressLog.Report("[INFO] Using advanced match algorithm...");
-                    // More than one match. Fall back to advanced identification.
-                    if (possibleArchiveMatches.Count(x => x.Name == modFileInfo.Name) == 1)
-                    {
-                        var index = possibleArchiveMatches.IndexOf(possibleArchiveMatches.First(x => x.Name == modFileInfo.Name));
-                        var item = possibleArchiveMatches[index];
-
-                        possibleArchiveMatches.RemoveAt(index);
-                        possibleArchiveMatches.Insert(0, item);
-                    }
-
-                    foreach (var possibleArchiveMatch in possibleArchiveMatches)
-                    {
-                        progressLog.Report($"[INFO] Checking possible match: {possibleArchiveMatch.Name}");
-
-                        if (AreFilesEqual(possibleArchiveMatch, modFileInfo))
-                        {
-                            progressLog.Report($"[DONE] Match found: {possibleArchiveMatch.Name}");
-
-                            archiveModPairs.Add(archiveModPair.New(possibleArchiveMatch.FullName, modFileInfo.FullName));
-                            break;
-                        }
-                    }
-
-                    if (!archiveModPairs.Contains(archiveModPair))
-                    {
-                        progressLog.Report($"[WARN] {Path.GetFileName(modFile)} has no valid match.");
-                        progressLog.Report("[DONE]");
-
-                        if (!modObject.Inconsistencies.Contains(Inconsistency.InvalidPair))
-                        {
-                            modObject.Inconsistencies.Add(Inconsistency.InvalidPair);
-                        }
-
-                        modObject.InvalidModPairCount++;
-
-                        _logger.Write($"{modFile} had no valid match. \n");
-                    }
-                }
-
-                modObject.ArchiveModFilePairs = archiveModPairs;
-
-                progressLog.Report("[INFO] Removing extracted files...");
-                Directory.Delete(archiveExtractionPath, true);
-                progressLog.Report("[DONE]");
-            }
-
-            // Write modpack to file
+                CompileMod(progressLog, mod, download_metadata);
+            });
 
             progressLog.Report("[INFO] Exporting to modpack...");
             await _modpackExport.ExportModpack();
             progressLog.Report("[DONE]");
 
             progressLog.Report("");
-            progressLog.Report("[INFO] OPERATION COMPLETED");
+            stopwatch.Stop();
+            Update(progressLog, "[INFO] OPERATION COMPLETED - ", stopwatch.Elapsed.TotalSeconds.ToString(), "sec");
+
+
+            return;
         }
 
-        private bool AreFilesEqual(FileInfo archiveFile, FileInfo modFile)
+        private void CompileMod(IProgress<string> progressLog, IntermediaryModObject mod, IEnumerable<ArchiveContents> download_metadata)
         {
-            var bytesToRead = 8;
-            var iterations = (int)Math.Ceiling((double)modFile.Length / bytesToRead);
-
-            using (var modFileStream = modFile.OpenRead())
+            var mod_name = Path.GetFileName(mod.ModPath);
+            Update(progressLog, "[MOD] Compiling", mod_name);
+            var matching_archive = download_metadata.Where(md => md.DiskName.Trim() == Path.GetFileName(mod.ArchivePath).Trim()).FirstOrDefault();
+            if (matching_archive == null)
             {
-                var two = new byte[bytesToRead];
-                var one = new byte[bytesToRead];
+                Update(progressLog, "[MOD] No match for", mod_name);
+                return;
 
-                using (var archiveFileStream = archiveFile.OpenRead())
-
-                for (var i = 0; i < iterations; i++)
-                {
-                    modFileStream.Read(one, 0, bytesToRead);
-                    archiveFileStream.Read(two, 0, bytesToRead);
-
-                    if (BitConverter.ToInt64(one, 0) != BitConverter.ToInt64(two, 0))
-                    {
-                        return false;
-                    }
-                }
             }
+            mod.Author = matching_archive.Author;
+            mod.IsNexusSource = matching_archive.Repository == "Nexus";
+            mod.TargetGame = matching_archive.TargetGame;
+            mod.Md5 = matching_archive.MD5;
+            mod.ModId = matching_archive.NexusModId;
+            mod.FileId = matching_archive.NexusFileId;
+            mod.NexusFileName = matching_archive.NexusFileName;
+            mod.TrueArchiveName = matching_archive.DiskName;
+            mod.Version = matching_archive.Version;
+            mod.Size = matching_archive.FileSize;
+            mod.Repository = matching_archive.Repository;
 
+            var indexed = matching_archive.Contents.GroupBy(k => k.SHA256).ToDictionary(k => k.Key);
+            var archive_pairs = new ConcurrentStack<ArchiveModFilePair>();
+
+            Parallel.ForEach(Directory.EnumerateFiles(mod.ModPath, "*", SearchOption.AllDirectories),
+                file =>
+            {
+                if (Path.GetFileName(file) == "meta.ini") return;
+                var shortened_name = file.Substring(mod.ModPath.Length);
+                var hash = Extensions.SHA256(file);
+
+
+                if (indexed.TryGetValue(hash, out var matches))
+                {
+                    //if (matches.Count() > 0)
+                    //Update(progressLog, "[MOD] WARNING: multiple matches found for", shortened_name);
+                    archive_pairs.Push(new ArchiveModFilePair("\\" + matches.First().FileName, shortened_name));
+                }
+                else
+                {
+                    //Update(progressLog, "[MOD] No Match found for", shortened_name);
+                }
+
+            });
+
+            mod.ArchiveModFilePairs = archive_pairs.ToList();
+
+        }
+
+        private static ISet<string> SUPPORTED_ARCHIVES = new HashSet<string>() { ".zip", ".7z", ".7zip", ".rar" };
+        private static string METADATA_EXTENSION = ".archive_meta";
+
+        private void Update(IProgress<string> progress, params object[] vals)
+        {
+            var msg = string.Join(" ", vals.Select(v => v.ToString()));
+            _logger.Write(msg);
+            progress.Report(msg);
+        }
+
+        private async Task<IEnumerable<ArchiveContents>> GetDownloadMetadata(IProgress<string> progress)
+        {
+            var ini_files = Directory.EnumerateFiles(_transcompilerBase.MODirectory, "meta.ini", SearchOption.AllDirectories)
+                                    .AsParallel()
+                                    .Select(f => (new FileIniDataParser()).ReadFile(f))
+                                    .ToList();
+
+            var archives = Directory.EnumerateFiles(_transcompilerBase.DownloadsDirectoryPath, "*.*");
+
+            var tasks = archives.AsParallel()
+                .Select(async archive => {
+                    if (!SUPPORTED_ARCHIVES.Contains(Path.GetExtension(archive).ToLower())) return;
+                    var meta_data_path = Path.Combine(_transcompilerBase.DownloadsDirectoryPath, archive) + METADATA_EXTENSION;
+
+                    if (File.Exists(meta_data_path)) return;
+                    Update(progress, "[META] Generating Metadata for: ", Path.GetFileName(archive));
+                    
+
+                    using (var archive_file = new ArchiveFile(archive))
+                    {
+                        // Extract the contents  of the file and attach each to a hashing stream
+                        var streams = new Dictionary<string, HashingStream>();
+                        archive_file.Extract(e =>
+                        {
+                            if (e.IsFolder) return null;
+                            if (streams.ContainsKey(e.FileName))
+                                return streams[e.FileName];
+
+                            var stream = new HashingStream(e.FileName);
+                            streams.Add(e.FileName, stream);
+                            return stream;
+                        });
+
+                        var contents = from stream in streams.Values
+                                       select new ArchiveEntry
+                                       {
+                                           FileName = stream.Filename,
+                                           MD5 = stream.MD5Hash,
+                                           SHA256 = stream.SHA256Hash,
+                                           Size = stream.Size.ToString()
+                                       };
+
+                        var ac = new ArchiveContents();
+
+
+                            using (var file = File.OpenRead(archive))
+                            {
+                                var hasher = new MD5CryptoServiceProvider();
+                                hasher.ComputeHash(file);
+                                ac.MD5 = HashingStream.ToHex(hasher.Hash);
+                            }
+
+                            using (var file = File.OpenRead(archive))
+                            {
+                                var hasher = new SHA256CryptoServiceProvider();
+                                hasher.ComputeHash(file);
+                                ac.SHA256 = HashingStream.ToHex(hasher.Hash);
+                            }
+                            ac.DiskName = Path.GetFileName(archive);
+                            ac.FileSize = (new FileInfo(archive)).Length.ToString();
+                            ac.Contents = contents.ToArray();
+
+                        // Look for an .meta file next to the archive itself
+                        var meta_path = archive + ".meta";
+                        bool found_ini = false;
+                        if (File.Exists(meta_path))
+                        {
+                            var meta_ini = (new FileIniDataParser()).ReadFile(meta_path);
+                            var general = meta_ini["General"];
+                            
+                            ac.NexusModId = general["modID"];
+                            ac.NexusFileId = general["fileID"];
+                            ac.TargetGame = general["gameName"];
+                            ac.ModName = general["modName"];
+                            ac.Version = general["version"];
+                            ac.Repository = general["repository"];
+                        }
+                        
+                        if (found_ini == false)
+                        {
+                            // Try to find a matching .meta file in a mod that uses this archive
+                            var archive_file_name = Path.GetFileName(archive);
+                            var match = ini_files.Where(d => Path.GetFileName(d.GetIn("General", "installationFile")) == archive_file_name)
+                                                 .FirstOrDefault();
+                            if (match != null)
+                            {
+                                var general = match["General"];
+                                ac.TargetGame = general["gameName"];
+                                ac.Repository = general["repository"];
+                            }
+                        }
+
+                        // Try to find a matching nexus mod
+                        var result = await _nexusApi.GetModsByMd5(new IntermediaryModObject
+                        {
+                            Md5 = ac.MD5,
+                            TrueArchiveName = ac.DiskName,
+                            TargetGame = ac.TargetGame
+                        });
+
+                        if (result != null)
+                        {
+                            ac.Author = result.AuthorName;
+                            ac.NexusModId = result.ModId;
+                            ac.NexusFileName = result.NexusFileName;
+                            ac.NexusFileId = result.FileId;
+                            ac.Version = result.Version;
+                            ac.FileSize = (new FileInfo(archive)).Length.ToString();
+                        }
+
+                        await WriteJSON(meta_data_path, ac);
+                        Update(progress, "[META] Finished", Path.GetFileName(archive));
+                    }
+
+                });
+
+            await Task.WhenAll(tasks);
+
+            ConcurrentStack<ArchiveContents> loaded = new ConcurrentStack<ArchiveContents>();
+
+
+            var result_tasks = Directory.EnumerateFiles(_transcompilerBase.DownloadsDirectoryPath, "*" + METADATA_EXTENSION)
+                                    .AsParallel()
+                                    .Select(async file =>
+                                    {
+                                        using (var r = new StreamReader(File.OpenRead(file)))
+                                        {
+                                            return JsonConvert.DeserializeObject<ArchiveContents>(await r.ReadToEndAsync());
+                                        }
+                                    });
+
+            await Task.WhenAll(result_tasks);
+
+            var results = result_tasks.Select(t => t.Result).ToList();
+
+            return results;
+        }
+
+
+        private async Task<bool> WriteJSON(string meta_data_path, ArchiveContents ac)
+        { 
+            using (var file = new StreamWriter(File.OpenWrite(meta_data_path)))
+            {
+                await file.WriteAsync(JsonConvert.SerializeObject(ac, new JsonSerializerSettings() {Formatting = Formatting.Indented } ));
+            }
             return true;
         }
-    }
-
-    public class TranscompileProgress
-    {
-        public int TotalModCount { get; set; }
-        public int CurrentModCount { get; set; }
-        public IntermediaryModObject CurrentModObject { get; set; }
-        public FileInfo CurrentModFile { get; set; }
-        public CurrentTranscompileStep CurrentTranscompileStep { get; set; }
-    }
-
-    public enum CurrentTranscompileStep
-    {
-        NexusApi,
-        Extraction,
-        Indexing,
-        Matching
     }
 }
