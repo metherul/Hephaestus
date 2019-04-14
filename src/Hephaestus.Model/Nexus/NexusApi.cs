@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
+using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Hephaestus.Model.Core;
@@ -57,6 +58,7 @@ namespace Hephaestus.Model.Nexus
 
                 _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 _httpClient.DefaultRequestHeaders.Add("APIKEY", _apiKey);
+                _httpClient.Timeout = TimeSpan.FromMinutes(1);
 
                 // Get the premium status of the account
                 var response = await _httpClient.GetAsync("/v1/users/validate.json");
@@ -112,47 +114,70 @@ namespace Hephaestus.Model.Nexus
 
         public async Task<GetModsByMd5Result> GetModsByMd5(IntermediaryModObject mod)
         {
-            var md5 = mod.Md5;
-            var response = new HttpResponseMessage();
-
-            _logger.Write($"MD5 Query: {md5} \n");
-
-            try
+            while (true)
             {
-                var game = ConvertGameName(mod.TargetGame != null ? mod.TargetGame : _gameName);
-                response = await _httpClient.GetAsync($"/v1/games/{game}/mods/md5_search/{md5.ToLower()}.json");
-                RemainingDailyRequests = Convert.ToInt32(response.Headers.GetValues("X-RL-Daily-Remaining").ToList().First());
+                var md5 = mod.Md5;
+                var response = new HttpResponseMessage();
 
-                var result = response.Content.ReadAsStringAsync().Result;
-                var apiJson = JArray.Parse(result);
-                var possibleJsonObjects = apiJson.Where(x => (bool)x["mod"]["available"] == true).Where(x => (int)x["file_details"]["category_id"] != 6);
-                var jsonObject = possibleJsonObjects.First();
+                _logger.Write($"MD5 Query: {md5} \n");
 
-                if (possibleJsonObjects.Count() > 1)
+                try
                 {
-                    // We need to step through more advanced algorithms
-                    _logger.Write("More than one possible json object AFTER filter. Marking for later validation.");
+                    var game = ConvertGameName(mod.TargetGame != null ? mod.TargetGame : _gameName);
+                    try
+                    {
+                        response = await _httpClient.GetAsync($"/v1/games/{game}/mods/md5_search/{md5.ToLower()}.json");
+                    }
+                    catch (TaskCanceledException ex)
+                    {
+                        // This sometimes happens if Nexus throws an error, so we'll wait awhile then retry:
+                        await Task.Delay(3000); // Wait 3 seconds
+                        continue;
+                    }
+
+                    RemainingDailyRequests = Convert.ToInt32(response.Headers.GetValues("X-RL-Daily-Remaining").ToList().First());
+                    _logger.Write("[NexusAPI] Remaining Requests " + RemainingDailyRequests.ToString());
+
+                    var result = response.Content.ReadAsStringAsync().Result;
+                    var apiJson = JArray.Parse(result);
+                    var possibleJsonObjects = apiJson.Where(x => (bool)x["mod"]["available"] == true).Where(x => (int)x["file_details"]["category_id"] != 6);
+                    var jsonObject = possibleJsonObjects.First();
+
+                    if (possibleJsonObjects.Count() > 1)
+                    {
+                        // We need to step through more advanced algorithms
+                        _logger.Write("More than one possible json object AFTER filter. Attempting to fix ComputeLevenshtein()");
+
+                        jsonObject = possibleJsonObjects.Where(x => x["file_details"]["file_name"].ToString().Trim() == mod.TrueArchiveName.Trim()).First();
+                    }
+
+                    if (!possibleJsonObjects.Any())
+                    {
+                        _logger.Write($"No valid json objects for md5: {md5}. Report this to the modpack author, this mod needs to be updated/removed");
+
+                        return null;
+                    }
+
+                    _logger.Write($"success.\n");
+
+                    return new GetModsByMd5Result()
+                    {
+                        AuthorName = jsonObject["mod"]["author"].ToString(),
+                        ModId = jsonObject["mod"]["mod_id"].ToString(),
+                        FileId = jsonObject["file_details"]["file_id"].ToString(),
+                        ArchiveName = jsonObject["file_details"]["file_name"].ToString(),
+                        Version = jsonObject["file_details"]["version"].ToString(),
+                        NexusFileName = jsonObject["file_details"]["name"].ToString()
+                    };
+                }
+
+
+                catch (Exception e)
+                {
+                    _logger.Write($"Nexus API request failed: {e.InnerException} \n");
+
                     return null;
-                }  
-
-                _logger.Write($"success.\n");
-
-                return new GetModsByMd5Result()
-                {
-                    AuthorName = jsonObject["mod"]["author"].ToString(),
-                    ModId = jsonObject["mod"]["mod_id"].ToString(),
-                    FileId = jsonObject["file_details"]["file_id"].ToString(),
-                    ArchiveName = jsonObject["file_details"]["file_name"].ToString(),
-                    Version = jsonObject["file_details"]["version"].ToString(),
-                    NexusFileName = jsonObject["file_details"]["name"].ToString()
-                };
-            }
-
-            catch (Exception e)
-            {
-                _logger.Write($"Nexus API request failed: {e.InnerException} \n");
-
-                return null;
+                }
             }
         }
 
